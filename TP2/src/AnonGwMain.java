@@ -10,7 +10,7 @@ public class AnonGwMain {
         }
 
         String serverIP = args[1];
-        int serverPort = Integer.parseInt(args[3]);
+        int port = Integer.parseInt(args[3]);
 
         /*List<String> peers = new ArrayList<>();
         for(int i = 6 ; i < args.length ; i++){
@@ -20,9 +20,9 @@ public class AnonGwMain {
         AnonGwCloud cloud = new AnonGwCloud();
 
         InetAddress localAddress = InetAddress.getByName(serverIP);
-        ServerSocket s = new ServerSocket(serverPort);
+        ServerSocket s = new ServerSocket(port);
 
-        Socket socketServer = new Socket(localAddress, serverPort);
+        Socket socketServer = new Socket(localAddress, port);
         Thread readerServer =  new Thread(new AnonGwReader(cloud,socketServer));
         Thread writerServer = new Thread(new AnonGwWriter(cloud, socketServer));
         readerServer.start();
