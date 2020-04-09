@@ -17,11 +17,11 @@ public class AnonGwReader implements Runnable{
     @Override
     public void run() {
         byte[] reply = new byte[1024];
-        byte[] r ;
-        int numBytes = -1;
+        int numBytes;
         try{
             while ((numBytes = in.read(reply)) != -1 ) {
-                cloud.inserirFicheiro(this.address,reply,numBytes);
+                cloud.inserirConteudo(this.address,reply,numBytes);
+                System.out.println("Lido com sucesso");
             }
         } catch (IOException e) {
             e.printStackTrace();

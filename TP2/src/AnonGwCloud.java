@@ -7,26 +7,27 @@ public class AnonGwCloud {
 
     public AnonGwCloud(){
         conteudos = new HashMap<>();
+        tamanhos = new HashMap<>();
     }
 
-    public synchronized void inserirFicheiro (String address, byte[] ficheiro, int tamanho){
-        if(address != null && ficheiro!= null && tamanho > 0){
-            conteudos.put(address,ficheiro);
+    public synchronized void inserirConteudo (String address, byte[] conteudo, int tamanho){
+        if(address != null && conteudo != null && tamanho > 0){
+            conteudos.put(address,conteudo);
             tamanhos.put(address,tamanho);
         }
     }
 
-    public synchronized byte[] getFicheiro(String address){
+    public synchronized byte[] getConteudo(String address){
         if(conteudos.containsKey(address)){
-            byte[] ficheiro = conteudos.get(address).clone();
+            byte[] conteudo = conteudos.get(address).clone();
             conteudos.remove(address);
-            return ficheiro;
+            return conteudo;
         }
         return null;
     }
 
     public synchronized int getTamanho(String address){
-        if(conteudos.containsKey(address)){
+        if(tamanhos.containsKey(address)){
             int tamanho = tamanhos.get(address);
             tamanhos.remove(address);
             return tamanho;
