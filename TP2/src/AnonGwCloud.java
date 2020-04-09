@@ -16,7 +16,7 @@ public class AnonGwCloud {
     }
 
     public synchronized byte[] getFicheiro(String address){
-        if(address != null){
+        if(ficheiros.containsKey(address)){
             byte[] ficheiro = ficheiros.get(address).clone();
             ficheiros.remove(address);
             return ficheiro;

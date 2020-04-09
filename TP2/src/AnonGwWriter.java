@@ -16,7 +16,7 @@ public class AnonGwWriter implements Runnable{
 
     @Override
     public void run() {
-        try {
+        try  {
             while (true) {
                 byte[] ficheiro = this.cloud.getFicheiro(address);
                 if(ficheiro != null){
