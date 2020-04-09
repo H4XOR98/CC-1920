@@ -18,9 +18,10 @@ public class AnonGwWriter implements Runnable{
     public void run() {
         try  {
             while (true) {
-                byte[] ficheiro = this.cloud.getFicheiro(address);
-                if(ficheiro != null){
-                    this.out.write(ficheiro);
+                byte[] conteudo = this.cloud.getFicheiro(this.address);
+                int tamanho = this.cloud.getTamanho(this.address);
+                if(conteudo != null && tamanho > 0){
+                    this.out.write(conteudo,0,tamanho);
                     this.out.flush();
                 }
             }

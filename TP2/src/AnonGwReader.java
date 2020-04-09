@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class AnonGwReader implements Runnable{
     private AnonGwCloud cloud;
@@ -16,9 +17,11 @@ public class AnonGwReader implements Runnable{
     @Override
     public void run() {
         byte[] reply = new byte[1024];
+        byte[] r ;
+        int numBytes = -1;
         try{
-            while (in.read(reply) != -1 ) {
-                cloud.inserirFicheiro(this.address,reply);
+            while ((numBytes = in.read(reply)) != -1 ) {
+                cloud.inserirFicheiro(this.address,reply,numBytes);
             }
         } catch (IOException e) {
             e.printStackTrace();
