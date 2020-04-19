@@ -1,55 +1,66 @@
+
+import javafx.util.Pair;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
-public class AnonGwCloud {
-    private Map<String, byte[]> conteudos;
-    private Map<String, Integer> tamanhos;
+public class AnonGWCloud {
+    private Map<String,Integer> clients;
+    private Map<Integer,String> clientsRequests;
+    private Map<Integer,byte[]> serversReplys;
+    private Queue<Integer> requestsQueue;
 
-    public AnonGwCloud(){
-        conteudos = new HashMap<>();
-        tamanhos = new HashMap<>();
+    private static int requestId = 0;
+    private final String serverAddress;
+    private final String localAnonGWAddress;
+
+    public AnonGWCloud(String serverAddress, String localAnonGWAddress){
+        this.clients = new HashMap<>();
+        this.clientsRequests = new HashMap<>();
+        this.serversReplys = new HashMap<>();
+        this.requestsQueue = new PriorityQueue<>();
+        this.serverAddress = serverAddress;
+        this.localAnonGWAddress = localAnonGWAddress;
     }
 
-    public synchronized void inserirConteudo (String address, byte[] conteudo, int tamanho){
-        System.out.println("Início da execução de [AnonGwCloud -> inserirConteudo]");
-        if(address != null && conteudo != null && tamanho > 0){
-            conteudos.put(address,conteudo);
-            tamanhos.put(address,tamanho);
-            System.out.println(tamanho);
-            System.out.println(address);
-            System.out.println(conteudo.toString());
-        }else{
-            System.out.println("Os valores são nulos");
+    public synchronized void insertRequest(String clientAddress, String request){
+        if(clientAddress != null && request != null && !clients.containsKey(clientAddress)){
+            this.clients.put(clientAddress,requestId);
+            this.clientsRequests.put(requestId,request.replace(serverAddress, localAnonGWAddress));
+            requestsQueue.add(requestId);
+            requestId++;
         }
-        System.out.println("Fim da execução de [AnonGwCloud -> inserirConteudo]");
     }
 
-    public synchronized byte[] getConteudo(String address){
-        System.out.println("Início da execução de [AnonGwCloud -> getConteudo]");
-        if(conteudos.containsKey(address)){
-            byte[] conteudo = conteudos.get(address).clone();
-            conteudos.remove(address);
-            System.out.println("Sucesso");
-            return conteudo;
-        }else {
-            System.out.println("O endereço não está registado no sistema");
+    public synchronized void insertReply(int id, byte[] file){
+        if(clients.containsKey(id) && file != null){
+            this.serversReplys.put(requestId,file);
         }
-        System.out.println("Fim da execução de [AnonGwCloud -> getConteudo]");
-        return null;
     }
 
-    public synchronized int getTamanho(String address){
-        System.out.println("Início da execução de [AnonGwCloud -> getTamanho]");
-        if(tamanhos.containsKey(address)){
-            int tamanho = tamanhos.get(address);
-            tamanhos.remove(address);
-            System.out.println("Sucesso");
-            return tamanho;
-        }else {
-            System.out.println("O endereço não está registado no sistema");
+    public synchronized Pair<Integer,String> getRequest(){
+        Pair<Integer,String> request = null;
+        if(this.requestsQueue.size() > 0){
+            int id = this.requestsQueue.poll();
+            if(this.clientsRequests.containsKey(id)){
+                request = new Pair(id,this.clientsRequests.get(id));
+                this.clientsRequests.remove(id);
+            }
         }
-        System.out.println("Fim da execução de [AnonGwCloud -> getTamanho]");
-        return 0;
+        return request;
     }
 
+    public synchronized byte[] getReply(String clientAddress){
+        byte[] file = null;
+
+        if(this.clients.containsKey(clientAddress)){
+            int id = this.clients.get(clientAddress);
+            if(this.serversReplys.containsKey(id)){
+                file = this.serversReplys.get(id);
+                this.serversReplys.remove(id);
+            }
+        }
+        return file;
+    }
 }

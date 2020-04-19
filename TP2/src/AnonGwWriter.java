@@ -1,33 +1,27 @@
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 public class AnonGwWriter implements Runnable{
-    private AnonGwCloud cloud;
-    private OutputStream out;
-    private String address;
+    private AnonGWCloud cloud;
+    private PrintWriter out;
+    private String clientAddress;
 
-    public AnonGwWriter(AnonGwCloud cloud, Socket socket) throws IOException {
+    public AnonGwWriter(AnonGWCloud cloud, Socket socket) throws IOException {
         this.cloud = cloud;
-        this.out = socket.getOutputStream();
-        this.address = socket.getInetAddress().getHostAddress();
+        this.out = new PrintWriter(socket.getOutputStream());
+        this.clientAddress = socket.getInetAddress().getHostAddress();
     }
 
 
     @Override
     public void run() {
-        try  {
-            while (true) {
-                byte[] conteudo = this.cloud.getConteudo(this.address);
-                int tamanho = this.cloud.getTamanho(this.address);
-                if(conteudo != null && tamanho > 0){
-                    this.out.write(conteudo,0,tamanho);
-                    this.out.flush();
-                    System.out.println("Sucesso na escrita");
-                }
+        while (true) {
+            byte[] file = this.cloud.getReply(this.clientAddress);
+            if(file != null){
+                this.out.println(file);
+                this.out.flush();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

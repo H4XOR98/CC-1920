@@ -1,27 +1,25 @@
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class AnonGwReader implements Runnable{
-    private AnonGwCloud cloud;
-    private InputStream in;
-    private String address;
+    private AnonGWCloud cloud;
+    private BufferedReader in;
+    private String clientAddress;
 
-    public AnonGwReader(AnonGwCloud cloud, Socket socket) throws IOException{
+    public AnonGwReader(AnonGWCloud cloud, Socket socket) throws IOException{
         this.cloud = cloud;
-        this.in = socket.getInputStream();
-        this.address = socket.getInetAddress().getHostAddress();
+        this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.clientAddress = socket.getInetAddress().getHostAddress();
     }
 
     @Override
     public void run() {
-        byte[] reply = new byte[1024];
-        int numBytes;
+        String request = null;
         try{
-            while ((numBytes = in.read(reply)) != -1 ) {
-                cloud.inserirConteudo(this.address,reply,numBytes);
-                System.out.println("Lido com sucesso");
+            while ((request = in.readLine()) != null) {
+                this.cloud.insertRequest(this.clientAddress,request);
             }
         } catch (IOException e) {
             e.printStackTrace();
