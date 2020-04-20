@@ -23,10 +23,12 @@ public class AnonGWCloud {
     }
 
     public synchronized void insertRequest(String clientAddress, String request){
+        System.out.println(clientAddress + " " + request + " " + clients.containsKey(clientAddress));
         if(clientAddress != null && request != null && !clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,requestId);
             this.clientsRequests.put(requestId,request.replace(serverAddress, localAnonGWAddress));
             requestsQueue.add(requestId);
+            System.out.println(clients.containsKey(clientAddress));
             requestId++;
         }
     }

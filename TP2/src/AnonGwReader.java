@@ -18,9 +18,10 @@ public class AnonGwReader implements Runnable{
     public void run() {
         String request = null;
         try{
-            while ((request = in.readLine()) != null) {
-                this.cloud.insertRequest(this.clientAddress,request);
+            while (request == null) {
+                request = in.readLine();
             }
+            this.cloud.insertRequest(this.clientAddress,request);
         } catch (IOException e) {
             e.printStackTrace();
         }
