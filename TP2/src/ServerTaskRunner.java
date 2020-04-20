@@ -1,6 +1,4 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ServerTaskRunner implements Runnable {
@@ -26,20 +24,17 @@ public class ServerTaskRunner implements Runnable {
 
     @Override
     public void run(){
+        int numBytes = -1;
         byte[] buffer = new byte[1024];
-        int numBytes;
         try{
             out.write(request.getBytes());
             out.flush();
             System.out.println("Enviado ao Servidor");
-            while ((numBytes = in.read(buffer)) != -1) {
-                byte[] reply = new byte[numBytes];
-                for (int i = 0; i < numBytes; i++){
-                    reply[i] = buffer[i];
-                }
-                this.cloud.insertReply(this.idRequest, reply);
-                System.out.println("Lido com sucesso");
+            while (numBytes == -1){
+                numBytes = in.read(buffer);
             }
+            this.cloud.insertReply(this.idRequest, buffer);
+            System.out.println("Lido com sucesso");
         }
         catch (IOException e){ e.printStackTrace(); }
     }

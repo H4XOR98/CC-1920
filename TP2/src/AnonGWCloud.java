@@ -26,7 +26,7 @@ public class AnonGWCloud {
         System.out.println(clientAddress + " " + request + " " + clients.containsKey(clientAddress));
         if(clientAddress != null && request != null && !clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,requestId);
-            this.clientsRequests.put(requestId,request.replace(serverAddress, localAnonGWAddress));
+            this.clientsRequests.put(requestId,request.replace(localAnonGWAddress,serverAddress));
             requestsQueue.add(requestId);
             System.out.println(clients.containsKey(clientAddress));
             requestId++;
@@ -34,8 +34,8 @@ public class AnonGWCloud {
     }
 
     public synchronized void insertReply(int id, byte[] file){
-        if(clients.containsKey(id) && file != null){
-            this.serversReplys.put(requestId,file);
+        if(clients.containsValue(id) && file != null){
+            this.serversReplys.put(id,file);
         }
     }
 
@@ -57,7 +57,7 @@ public class AnonGWCloud {
         if(this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
             if(this.serversReplys.containsKey(id)){
-                file = this.serversReplys.get(id);
+                file = this.serversReplys.get(id).clone();
                 this.serversReplys.remove(id);
             }
         }
