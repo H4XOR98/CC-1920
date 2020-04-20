@@ -23,15 +23,15 @@ public class AnonGWMain {
         }
 
         InetAddress inetAddress = InetAddress.getLocalHost();
-        String localAnonGWIP = inetAddress.getHostAddress();
+        String localAnonGWIP = inetAddress.getHostAddress();ß
 
         AnonGWCloud cloud = new AnonGWCloud(serverIP, localAnonGWIP);
 
         ServerSocket s = new ServerSocket(port);
         System.out.println("Socket server open");
 
-        InetAddress localAddress = InetAddress.getByName(serverIP);
-        Socket socketServer = new Socket(localAddress, port);
+        InetAddress serverAddress = InetAddress.getByName(serverIP);
+        Socket socketServer = new Socket(serverAddress, port);
         new Thread(new ServerTask(cloud,socketServer)).start();
 
         while (true) {
