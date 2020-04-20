@@ -27,10 +27,10 @@ public class AnonGWMain {
 
         AnonGWCloud cloud = new AnonGWCloud(serverIP, localAnonGWIP);
 
-        InetAddress localAddress = InetAddress.getByName(serverIP);
         ServerSocket s = new ServerSocket(port);
         System.out.println("Socket server open");
 
+        InetAddress localAddress = InetAddress.getByName(serverIP);
         Socket socketServer = new Socket(localAddress, port);
         new Thread(new ServerTask(cloud,socketServer)).start();
 
