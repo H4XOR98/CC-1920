@@ -23,7 +23,7 @@ public class AnonGWMain {
         }
 
         InetAddress inetAddress = InetAddress.getLocalHost();
-        String localAnonGWIP = inetAddress.getHostAddress();ß
+        String localAnonGWIP = inetAddress.getHostAddress();
 
         AnonGWCloud cloud = new AnonGWCloud(serverIP, localAnonGWIP);
 
