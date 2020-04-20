@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ServerTaskRunner implements Runnable {
 
@@ -33,7 +34,7 @@ public class ServerTaskRunner implements Runnable {
             while (numBytes == -1){
                 numBytes = in.read(buffer);
             }
-            this.cloud.insertReply(this.idRequest, buffer);
+            this.cloud.insertReply(this.idRequest, Arrays.copyOfRange(buffer,0,numBytes));
             System.out.println("Lido com sucesso");
         }
         catch (IOException e){ e.printStackTrace(); }
