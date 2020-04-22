@@ -17,13 +17,13 @@ public class AnonGWCloud {
         this.replys = new HashMap<>();
     }
 
-    public synchronized ServiceResult<Integer> insertClient(String clientAddress){
+    public synchronized int insertClient(String clientAddress){
         int result = -1;
         if(!this.clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,clientId);
             result = clientId++;
         }
-        return new ServiceResult<>(result != -1, result);
+        return result;
     }
 
     public synchronized void insertRequest(String clientAddress, String request){
@@ -41,16 +41,16 @@ public class AnonGWCloud {
         }
     }
 
-    public synchronized ServiceResult<String> getRequest(int id) {
+    public synchronized String getRequest(int id) {
         String request = null;
         if (this.clients.containsValue(id) && this.requests.containsKey(id)) {
             request = this.requests.get(id);
             this.requests.remove(id);
         }
-        return new ServiceResult<>(request != null, request);
+        return request;
     }
 
-    public synchronized ServiceResult<byte[]> getReply(String clientAddress){
+    public synchronized byte[] getReply(String clientAddress){
         byte[] content = null;
         if(this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
@@ -60,6 +60,6 @@ public class AnonGWCloud {
                 this.clients.remove(clientAddress);
             }
         }
-        return new ServiceResult<>(content != null, content);
+        return content;
     }
 }

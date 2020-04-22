@@ -27,13 +27,12 @@ public class AnonGWMain {
 
         while (true) {
             ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
+            int result = cloud.insertClient(clientConnection.getClientAddress());
             new Thread(new ClientReader(cloud, clientConnection)).start();
             new Thread(new ClientWriter(cloud, clientConnection)).start();
-            ServiceResult<Integer> result = cloud.insertClient(clientConnection.getClientAddress());
 
-            if(result.isSuccess()){
-                int clientId = result.getResult();
-                ServerConnection serverConnection = new ServerConnection(serverAddress, port, clientId);
+            if(result != -1){
+                ServerConnection serverConnection = new ServerConnection(serverAddress, port, result);
                 new Thread(new ServerReader(cloud, serverConnection)).start();
                 new Thread(new ServerWriter(cloud, serverConnection)).start();
             }else{

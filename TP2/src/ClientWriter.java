@@ -14,12 +14,12 @@ public class ClientWriter implements Runnable{
 
     @Override
     public void run() {
-        ServiceResult<byte[]> result;
+        byte[] result = null;
         try {
             while (true) {
                 result = this.cloud.getReply(this.connection.getClientAddress());
-                if(result.isSuccess()){
-                    this.connection.getOut().write(result.getResult());
+                if(result != null){
+                    this.connection.getOut().write(result);
                     this.connection.getOut().flush();
                 }
             }
