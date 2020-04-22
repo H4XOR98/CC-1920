@@ -12,14 +12,10 @@ public class ServerWriter implements Runnable {
     @Override
     public void run() {
         String result = null;
-        try {
-            while (result == null) {
-                result = this.cloud.getRequest(this.connection.getClientId());
-            }
-            this.connection.getOut().write(result.getBytes());
-            this.connection.getOut().flush();
-        }catch (IOException e){
-            e.printStackTrace();
+        while (result == null) {
+            result = this.cloud.getRequest(this.connection.getClientId());
         }
+        this.connection.getOut().println(result.getBytes());
+        this.connection.getOut().flush();
     }
 }
