@@ -28,4 +28,10 @@ public class ClientConnection {
     public OutputStream getOut() {
         return out;
     }
+
+    public void close() throws IOException {
+        this.in.close();
+        this.out.close();
+        this.socket.close();
+    }
 }

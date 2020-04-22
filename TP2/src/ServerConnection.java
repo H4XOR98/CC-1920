@@ -29,4 +29,9 @@ public class ServerConnection {
         return out;
     }
 
+    public void close() throws IOException {
+        this.in.close();
+        this.out.close();
+        this.socket.close();
+    }
 }

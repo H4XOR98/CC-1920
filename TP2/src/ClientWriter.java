@@ -21,6 +21,7 @@ public class ClientWriter implements Runnable{
                 if(result != null){
                     this.connection.getOut().write(result);
                     this.connection.getOut().flush();
+                    this.connection.close();
                 }
             }
         } catch (IOException e) {
