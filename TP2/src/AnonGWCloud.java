@@ -1,8 +1,5 @@
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class AnonGWCloud {
     private Map<String,Integer> clients;
@@ -22,6 +19,7 @@ public class AnonGWCloud {
         if(!this.clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,clientId);
             result = clientId++;
+            System.out.println("Cliente com IP " + clientAddress + " ligou-se e tem id " + result);
         }
         return result;
     }
@@ -31,6 +29,7 @@ public class AnonGWCloud {
             int id = this.clients.get(clientAddress);
             if(!this.requests.containsKey(id)){
                 this.requests.put(id, request);
+                System.out.println("Request introduzido com sucesso ? " + this.requests.containsKey(id) + " request " + this.requests.get(id));
             }
         }
     }
@@ -38,6 +37,7 @@ public class AnonGWCloud {
     public synchronized void insertReply(int id, byte[] content){
         if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
             this.replys.put(id,content);
+            System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
 
@@ -46,6 +46,7 @@ public class AnonGWCloud {
         if (this.clients.containsValue(id) && this.requests.containsKey(id)) {
             request = this.requests.get(id);
             this.requests.remove(id);
+            System.out.println("Request :" + request);
         }
         return request;
     }
@@ -58,6 +59,7 @@ public class AnonGWCloud {
                 content = this.replys.get(id).clone();
                 this.replys.remove(id);
                 this.clients.remove(clientAddress);
+                System.out.println("Request :" + content);
             }
         }
         return content;
