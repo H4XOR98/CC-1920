@@ -15,9 +15,9 @@ public class ServerWriter implements Runnable {
         try {
             while (!result.isSuccess()) {
                 result = this.cloud.getRequest(this.connection.getClientId());
-                this.connection.getOut().write(result.getResult().getBytes());
-                this.connection.getOut().flush();
             }
+            this.connection.getOut().write(result.getResult().getBytes());
+            this.connection.getOut().flush();
         }catch (IOException e){
             e.printStackTrace();
         }
