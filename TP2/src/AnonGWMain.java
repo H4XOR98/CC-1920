@@ -13,7 +13,7 @@ public class AnonGWMain {
             throw new IllegalArgumentException("insuficient arguments");
         }
 
-        String serverIP = args[1];
+        String serverAddress = args[1];
         int port = Integer.parseInt(args[3]);
 
         List<String> peers;
@@ -22,25 +22,23 @@ public class AnonGWMain {
             peers.add(args[i]);
         }
 
-        InetAddress inetAddress = InetAddress.getLocalHost();
-        String localAnonGWIP = inetAddress.getHostAddress();
-
-        AnonGWCloud cloud = new AnonGWCloud(serverIP, localAnonGWIP);
-
-        ServerSocket s = new ServerSocket(port);
-        System.out.println("Socket server open");
-
-        InetAddress serverAddress = InetAddress.getByName(serverIP);
-        Socket socketServer = new Socket(serverAddress, port);
-        new Thread(new ServerTask(cloud,socketServer)).start();
+        ServerSocket anonGWSeverSocket = new ServerSocket(port);
+        AnonGWCloud cloud = new AnonGWCloud();
 
         while (true) {
-            Socket socketClient = s.accept();
-            System.out.println("Socket cliente open");
-            Thread readerClient = new Thread(new AnonGwReader(cloud, socketClient));
-            Thread writerClient = new Thread(new AnonGwWriter(cloud, socketClient));
-            readerClient.start();
-            writerClient.start();
+            ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
+            new Thread(new ClientReader(cloud, clientConnection)).start();
+            new Thread(new ClientWriter(cloud, clientConnection)).start();
+            ServiceResult<Integer> result = cloud.insertClient(clientConnection.getClientAddress());
+
+            if(result.isSuccess()){
+                int clientId = result.getResult();
+                ServerConnection serverConnection = new ServerConnection(serverAddress, port, clientId);
+                new Thread(new ServerReader(cloud, serverConnection)).start();
+                new Thread(new ServerWriter(cloud, serverConnection)).start();
+            }else{
+                //clientConnection.close();
+            }
         }
     }
 }

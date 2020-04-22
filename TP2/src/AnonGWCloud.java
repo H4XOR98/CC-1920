@@ -2,65 +2,64 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AnonGWCloud {
     private Map<String,Integer> clients;
-    private Map<Integer,String> clientsRequests;
-    private Map<Integer,byte[]> serversReplys;
-    private Queue<Integer> requestsQueue;
+    private Map<Integer,String> requests;
+    private Map<Integer,byte[]> replys;
 
-    private static int requestId = 0;
-    private final String serverAddress;
-    private final String localAnonGWAddress;
+    private static int clientId = 0;
 
-    public AnonGWCloud(String serverAddress, String localAnonGWAddress){
+    public AnonGWCloud(){
         this.clients = new HashMap<>();
-        this.clientsRequests = new HashMap<>();
-        this.serversReplys = new HashMap<>();
-        this.requestsQueue = new PriorityQueue<>();
-        this.serverAddress = serverAddress;
-        this.localAnonGWAddress = localAnonGWAddress;
+        this.requests = new HashMap<>();
+        this.replys = new HashMap<>();
+    }
+
+    public synchronized ServiceResult<Integer> insertClient(String clientAddress){
+        int result = -1;
+        if(!this.clients.containsKey(clientAddress)){
+            this.clients.put(clientAddress,clientId);
+            clientId++;
+        }
+        return new ServiceResult<>(result != -1, result);
     }
 
     public synchronized void insertRequest(String clientAddress, String request){
-        System.out.println(clientAddress + " " + request + " " + clients.containsKey(clientAddress));
-        if(clientAddress != null && request != null && !clients.containsKey(clientAddress)){
-            this.clients.put(clientAddress,requestId);
-            this.clientsRequests.put(requestId,request.replace(localAnonGWAddress,serverAddress));
-            requestsQueue.add(requestId);
-            System.out.println(clients.containsKey(clientAddress));
-            requestId++;
-        }
-    }
-
-    public synchronized void insertReply(int id, byte[] file){
-        if(clients.containsValue(id) && file != null){
-            this.serversReplys.put(id,file);
-        }
-    }
-
-    public synchronized Pair<Integer,String> getRequest(){
-        Pair<Integer,String> request = null;
-        if(this.requestsQueue.size() > 0){
-            int id = this.requestsQueue.poll();
-            if(this.clientsRequests.containsKey(id)){
-                request = new Pair(id,this.clientsRequests.get(id));
-                this.clientsRequests.remove(id);
+        if(request != null && this.clients.containsKey(clientAddress)){
+            int id = this.clients.get(clientAddress);
+            if(!this.requests.containsKey(id)){
+                this.requests.put(id, request);
             }
         }
-        return request;
     }
 
-    public synchronized byte[] getReply(String clientAddress){
-        byte[] file = null;
+    public synchronized void insertReply(int id, byte[] content){
+        if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
+            this.replys.put(id,content);
+        }
+    }
 
+    public synchronized ServiceResult<String> getRequest(int id) {
+        String request = null;
+        if (this.clients.containsValue(id) && this.requests.containsKey(id)) {
+            request = this.requests.get(id);
+            this.requests.remove(id);
+        }
+        return new ServiceResult<>(request != null, request);
+    }
+
+    public synchronized ServiceResult<byte[]> getReply(String clientAddress){
+        byte[] content = null;
         if(this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
-            if(this.serversReplys.containsKey(id)){
-                file = this.serversReplys.get(id).clone();
-                this.serversReplys.remove(id);
+            if(this.replys.containsKey(id)){
+                content = this.replys.get(id).clone();
+                this.replys.remove(id);
+                this.clients.remove(clientAddress);
             }
         }
-        return file;
+        return new ServiceResult<>(content != null, content);
     }
 }
