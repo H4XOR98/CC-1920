@@ -1,4 +1,3 @@
-import java.io.IOException;
 
 public class ServerWriter implements Runnable {
     private AnonGWCloud cloud;
@@ -15,7 +14,7 @@ public class ServerWriter implements Runnable {
         while (result == null) {
             result = this.cloud.getRequest(this.connection.getClientId());
         }
-        this.connection.getOut().println(result.getBytes());
+        this.connection.getOut().println(result);
         this.connection.getOut().flush();
     }
 }
