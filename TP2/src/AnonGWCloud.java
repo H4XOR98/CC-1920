@@ -42,8 +42,6 @@ public class AnonGWCloud {
     public synchronized void insertReply(int id, byte[] content) throws IOException {
         if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
             this.replys.put(id,content);
-            Path path = Paths.get("/home/core/Desktop/CC-1920-master/TP2/src/teste");
-            Files.write(path, content);
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
@@ -66,7 +64,7 @@ public class AnonGWCloud {
                 content = this.replys.get(id).clone();
                 this.replys.remove(id);
                 this.clients.remove(clientAddress);
-                System.out.println("Request :" + content);
+                System.out.println("Reply :" + content);
             }
         }
         return content;

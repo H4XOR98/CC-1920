@@ -12,13 +12,14 @@ public class ServerReader implements Runnable {
 
     @Override
     public void run() {
-        int numBytes = -1;
-        byte[] buffer = new byte[1024];
+        int numBytes;
+        byte[] buffer = new byte[4096];
         try {
-            while (numBytes == -1) {
-                numBytes = this.connection.getIn().read(buffer);
+            while(true) {
+                while ((numBytes = this.connection.getIn().read(buffer)) > 0) {
+                    this.cloud.insertReply(this.connection.getClientId(), Arrays.copyOfRange(buffer, 0, numBytes));
+                }
             }
-            this.cloud.insertReply(this.connection.getClientId(), Arrays.copyOfRange(buffer,0,numBytes));
         } catch (IOException e) {
             e.printStackTrace();
         }
