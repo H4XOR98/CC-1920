@@ -21,13 +21,13 @@ public class AnonGWCloud {
         int result = -1;
         if(!this.clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,clientId);
-            clientId++;
+            result = clientId++;
         }
         return new ServiceResult<>(result != -1, result);
     }
 
     public synchronized void insertRequest(String clientAddress, String request){
-        if(request != null && this.clients.containsKey(clientAddress)){
+        if(clientAddress != null && request != null && this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
             if(!this.requests.containsKey(id)){
                 this.requests.put(id, request);
