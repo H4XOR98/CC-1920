@@ -1,3 +1,8 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,9 +39,11 @@ public class AnonGWCloud {
         }
     }
 
-    public synchronized void insertReply(int id, byte[] content){
+    public synchronized void insertReply(int id, byte[] content) throws IOException {
         if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
             this.replys.put(id,content);
+            Path path = Paths.get("/home/core/Desktop/CC-1920-master/TP2/src/teste");
+            Files.write(path, content);
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
