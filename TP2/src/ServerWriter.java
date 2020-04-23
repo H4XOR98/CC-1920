@@ -1,3 +1,4 @@
+import java.io.IOException;
 
 public class ServerWriter implements Runnable {
     private AnonGWCloud cloud;
