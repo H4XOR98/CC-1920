@@ -6,7 +6,7 @@ public class ClientWriter implements Runnable{
     private ClientConnection connection;
     private AtomicBoolean writePermission;
 
-    public ClientWriter(AnonGWCloud cloud, ClientConnection connection, AtomicBoolean writePermission) throws IOException {
+    public ClientWriter(AnonGWCloud cloud, ClientConnection connection, AtomicBoolean writePermission) {
         this.cloud = cloud;
         this.connection = connection;
         this.writePermission = writePermission;
@@ -23,12 +23,9 @@ public class ClientWriter implements Runnable{
                     this.connection.getOut().flush();;
                     this.writePermission.set(false);
                     this.connection.close();
-                    Thread.currentThread().join();
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

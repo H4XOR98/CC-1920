@@ -1,6 +1,5 @@
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AnonGWCloud {
     private Map<String,Integer> clients;
@@ -31,7 +30,7 @@ public class AnonGWCloud {
     public synchronized void insertRequest(String clientAddress, byte[] request) {
         if (clientAddress != null && request != null && this.clients.containsKey(clientAddress)) {
             int id = this.clients.get(clientAddress);
-            if (!this.requests.containsKey(id)) {
+            if (!this.requests.containsKey(id) && this.writePermissions.containsKey(id)) {
                 this.requests.put(id, request);
                 this.writePermissions.get(id).getServerWritePermission().set(true);
                 System.out.println("Request introduzido com sucesso ? " + this.requests.containsKey(id) + " request " + this.requests.get(id));
@@ -51,9 +50,10 @@ public class AnonGWCloud {
 
 
     public synchronized void insertReply(int id, byte[] content) {
-        if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
+        if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id) && this.writePermissions.containsKey(id)){
             this.replys.put(id,content);
             this.writePermissions.get(id).getClientWritePermission().set(true);
+            System.out.println("Permissao " + this.writePermissions.get(id).getClientWritePermission().get());
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
