@@ -1,17 +1,19 @@
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
 public class ServerConnection {
     private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
+    private InputStream in;
+    private OutputStream out;
     private int clientId;
 
-    public ServerConnection(String serverAddress, int port, int clientId) throws IOException {
+    public ServerConnection(String serverAddress,int port, int clientId) throws IOException {
         this.socket = new Socket(InetAddress.getByName(serverAddress), port);
-        this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-        this.out = new PrintWriter(socket.getOutputStream());
+        this.in = this.socket.getInputStream();
+        this.out = this.socket.getOutputStream();
         this.clientId = clientId;
     }
 
@@ -19,17 +21,11 @@ public class ServerConnection {
         return clientId;
     }
 
-    public BufferedReader getIn() {
+    public InputStream getIn() {
         return in;
     }
 
-    public PrintWriter getOut() {
+    public OutputStream getOut() {
         return out;
-    }
-
-    public void close() throws IOException {
-        this.in.close();
-        this.out.close();
-        this.socket.close();
     }
 }

@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Socket;
 
 public class ClientReader implements Runnable {
     private AnonGWCloud cloud;
@@ -14,12 +11,12 @@ public class ClientReader implements Runnable {
 
     @Override
     public void run() {
-        String request = null;
+        byte[] request = new byte[1024];
         try {
-            while (request == null) {
-                request = this.connection.getIn().readLine();
+            while (this.connection.getIn().read(request) != -1) {
+                this.cloud.insertRequest(this.connection.getClientAddress(),request);
+                System.out.println(new String(request));
             }
-            this.cloud.insertRequest(this.connection.getClientAddress(),request);
         } catch (IOException e) {
             e.printStackTrace();
         }

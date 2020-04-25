@@ -1,7 +1,4 @@
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
 
 public class ClientWriter implements Runnable{
     private AnonGWCloud cloud;
@@ -14,14 +11,13 @@ public class ClientWriter implements Runnable{
 
     @Override
     public void run() {
-        byte[] result = null;
-        try {
-            while (true) {
-                result = this.cloud.getReply(this.connection.getClientAddress());
-                if(result != null){
-                    this.connection.getOut().write(result);
+        byte[] reply;
+        try{
+            while(true){
+                reply = this.cloud.getReply(this.connection.getClientAddress());
+                if(reply != null){
+                    this.connection.getOut().write(reply);
                     this.connection.getOut().flush();
-                    this.connection.close();
                 }
             }
         } catch (IOException e) {
