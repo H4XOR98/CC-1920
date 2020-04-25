@@ -26,7 +26,7 @@ public class AnonGWMain {
             ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
             int idClient = cloud.insertClient(clientConnection.getClientAddress(), writePermission);
             new Thread(new ClientReader(cloud, clientConnection)).start();
-            new Thread(new ClientWriter(cloud, clientConnection)).start();
+            new Thread(new ClientWriter(cloud, clientConnection, writePermission.getClientPermission())).start();
             System.out.println("Cliente Aberto com id " + idClient);
             if(idClient != -1){
                 ServerConnection serverConnection = new ServerConnection(serverAddress, port, idClient);

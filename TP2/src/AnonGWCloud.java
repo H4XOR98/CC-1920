@@ -19,7 +19,7 @@ public class AnonGWCloud {
 
     public synchronized int insertClient(String clientAddress, WritePermission writePermission){
         int result = -1;
-        if(!this.clients.containsKey(clientAddress)){
+        if(!this.clients.containsKey(clientAddress) && !this.writepermissions.containsKey(clientId)){
             this.clients.put(clientAddress,clientId);
             this.writepermissions.put(clientId, writePermission);
             result = clientId++;
@@ -51,8 +51,9 @@ public class AnonGWCloud {
 
 
     public synchronized void insertReply(int id, byte[] content) {
-        if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
+        if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id) && this.writepermissions.containsKey(id)){
             this.replys.put(id,content);
+            this.writepermissions.get(id).getClientPermission().set(true);
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
@@ -61,9 +62,10 @@ public class AnonGWCloud {
         byte[] content = null;
         if(this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
-            if(this.replys.containsKey(id)){
+            if(this.replys.containsKey(id) && this.writepermissions.containsKey(id)){
                 content = this.replys.get(id).clone();
                 this.replys.remove(id);
+                this.writepermissions.remove(id);
                 this.clients.remove(clientAddress);
                 System.out.println("Reply :" + content);
             }
