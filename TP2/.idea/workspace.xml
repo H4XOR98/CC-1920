@@ -3,10 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ClientWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerWriter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +67,7 @@
       <workItem from="1587848778255" duration="49000" />
       <workItem from="1587849803282" duration="11000" />
       <workItem from="1587849976958" duration="319000" />
+      <workItem from="1587850517731" duration="1843000" />
     </task>
     <servers />
   </component>
@@ -74,11 +75,11 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1587840955942">
+    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1587851196604">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-745.1360.745@0.0.1680.1050" timestamp="1587834803654" />
-    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587840955942" />
+    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587851196604" />
     <state x="505" y="248" key="run.anything.popup" timestamp="1587839270345">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

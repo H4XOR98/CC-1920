@@ -22,15 +22,16 @@ public class AnonGWMain {
         AnonGWCloud cloud = new AnonGWCloud();
 
         while (true) {
+            WritePermission writePermissions = new WritePermission();
             ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
-            int result = cloud.insertClient(clientConnection.getClientAddress());
+            int result = cloud.insertClient(clientConnection.getClientAddress(),writePermissions);
             new Thread(new ClientReader(cloud, clientConnection)).start();
-            new Thread(new ClientWriter(cloud, clientConnection)).start();
+            new Thread(new ClientWriter(cloud, clientConnection, writePermissions.getClientWritePermission())).start();
             System.out.println("Cliente Aberto com id " + result);
             if(result != -1){
                 ServerConnection serverConnection = new ServerConnection(serverAddress, port, result);
                 new Thread(new ServerReader(cloud, serverConnection)).start();
-                new Thread(new ServerWriter(cloud, serverConnection)).start();
+                new Thread(new ServerWriter(cloud, serverConnection, writePermissions.getServerWritePermission())).start();
                 System.out.println("Socket Servidor Aberto para o cliente com id" + serverConnection.getClientId());
             }else{
                 //clientConnection.close();

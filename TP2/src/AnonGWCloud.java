@@ -1,9 +1,10 @@
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AnonGWCloud {
     private Map<String,Integer> clients;
+    private Map<Integer, WritePermission> writePermissions;
     private Map<Integer,byte[]> requests;
     private Map<Integer,byte[]> replys;
 
@@ -11,14 +12,16 @@ public class AnonGWCloud {
 
     public AnonGWCloud() {
         this.clients = new HashMap<>();
+        this.writePermissions = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
     }
 
-    public synchronized int insertClient(String clientAddress){
+    public synchronized int insertClient(String clientAddress, WritePermission writePermission){
         int result = -1;
         if(!this.clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,clientId);
+            this.writePermissions.put(clientId, writePermission);
             result = clientId++;
             System.out.println("Cliente com IP " + clientAddress + " ligou-se e tem id " + result);
         }
@@ -30,6 +33,7 @@ public class AnonGWCloud {
             int id = this.clients.get(clientAddress);
             if (!this.requests.containsKey(id)) {
                 this.requests.put(id, request);
+                this.writePermissions.get(id).setServerWritePermission(new AtomicBoolean(true));
                 System.out.println("Request introduzido com sucesso ? " + this.requests.containsKey(id) + " request " + this.requests.get(id));
             }
         }
@@ -49,6 +53,7 @@ public class AnonGWCloud {
     public synchronized void insertReply(int id, byte[] content) {
         if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
             this.replys.put(id,content);
+            this.writePermissions.get(id).setClientWritePermission(new AtomicBoolean(true));
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
