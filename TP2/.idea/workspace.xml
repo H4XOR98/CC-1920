@@ -3,17 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/TP2/META-INF/TP2.kotlin_module" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/WritePermission.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +61,7 @@
       <updated>1587834361161</updated>
       <workItem from="1587834362556" duration="1007000" />
       <workItem from="1587835550143" duration="4539000" />
-      <workItem from="1587855523663" duration="302000" />
+      <workItem from="1587855523663" duration="963000" />
     </task>
     <servers />
   </component>
@@ -77,11 +69,12 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1587840955942">
-      <screen x="0" y="0" width="1680" height="1050" />
+    <state x="699" y="-598" key="#com.intellij.ide.util.MemberChooser" timestamp="1587856192494">
+      <screen x="170" y="-768" width="1360" height="768" />
     </state>
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-745.1360.745@0.0.1680.1050" timestamp="1587834803654" />
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587840955942" />
+    <state x="699" y="-598" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@170.-768.1360.768" timestamp="1587856192494" />
     <state x="505" y="248" key="run.anything.popup" timestamp="1587839270345">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

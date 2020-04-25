@@ -4,6 +4,7 @@ import java.util.Map;
 
 public class AnonGWCloud {
     private Map<String,Integer> clients;
+    private Map<Integer, WritePermission> writepermissions;
     private Map<Integer,byte[]> requests;
     private Map<Integer,byte[]> replys;
 
@@ -11,14 +12,16 @@ public class AnonGWCloud {
 
     public AnonGWCloud() {
         this.clients = new HashMap<>();
+        this.writepermissions = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
     }
 
-    public synchronized int insertClient(String clientAddress){
+    public synchronized int insertClient(String clientAddress, WritePermission writePermission){
         int result = -1;
         if(!this.clients.containsKey(clientAddress)){
             this.clients.put(clientAddress,clientId);
+            this.writepermissions.put(clientId, writePermission);
             result = clientId++;
             System.out.println("Cliente com IP " + clientAddress + " ligou-se e tem id " + result);
         }
@@ -28,8 +31,9 @@ public class AnonGWCloud {
     public synchronized void insertRequest(String clientAddress, byte[] request) {
         if (clientAddress != null && request != null && this.clients.containsKey(clientAddress)) {
             int id = this.clients.get(clientAddress);
-            if (!this.requests.containsKey(id)) {
+            if (!this.requests.containsKey(id) && this.writepermissions.containsKey(id)) {
                 this.requests.put(id, request);
+                this.writepermissions.get(id).getServerPermission().set(true);
                 System.out.println("Request introduzido com sucesso ? " + this.requests.containsKey(id) + " request " + this.requests.get(id));
             }
         }
