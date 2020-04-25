@@ -9,17 +9,13 @@ public class ClientConnection implements IConnection{
     private OutputStream out;
     private String clientAddress;
 
-    public ClientConnection(Socket socket) {
+    public ClientConnection(Socket socket) throws IOException {
         this.socket = socket;
-    }
-
-
-    @Override
-    public void open() throws IOException {
         this.in = socket.getInputStream();
         this.out = socket.getOutputStream();
         this.clientAddress = socket.getInetAddress().getHostAddress();
     }
+
 
     @Override
     public void close() throws IOException {

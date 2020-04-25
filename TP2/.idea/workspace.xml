@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/IConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/IConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +66,7 @@
       <workItem from="1587834362556" duration="1007000" />
       <workItem from="1587835550143" duration="4539000" />
       <workItem from="1587842096661" duration="92000" />
-      <workItem from="1587842291620" duration="2443000" />
+      <workItem from="1587842291620" duration="2719000" />
     </task>
     <servers />
   </component>

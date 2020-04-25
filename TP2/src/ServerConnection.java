@@ -12,15 +12,11 @@ public class ServerConnection implements IConnection{
 
     public ServerConnection(String serverAddress,int port, int clientId) throws IOException {
         this.socket = new Socket(InetAddress.getByName(serverAddress), port);
+        this.in = this.socket.getInputStream();
+        this.out = this.socket.getOutputStream();
         this.clientId = clientId;
     }
 
-
-    @Override
-    public void open() throws IOException {
-        this.in = this.socket.getInputStream();
-        this.out = this.socket.getOutputStream();
-    }
 
     @Override
     public void close() throws IOException {
