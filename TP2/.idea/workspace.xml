@@ -4,9 +4,7 @@
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ClientWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientWriter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/WritePermission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/WritePermission.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +65,7 @@
       <workItem from="1587848778255" duration="49000" />
       <workItem from="1587849803282" duration="11000" />
       <workItem from="1587849976958" duration="319000" />
-      <workItem from="1587850517731" duration="1843000" />
+      <workItem from="1587850517731" duration="2370000" />
     </task>
     <servers />
   </component>

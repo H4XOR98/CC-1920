@@ -13,15 +13,7 @@ public class WritePermission {
         return clientWritePermission;
     }
 
-    public void setClientWritePermission(AtomicBoolean clientWritePermission) {
-        this.clientWritePermission = clientWritePermission;
-    }
-
     public AtomicBoolean getServerWritePermission() {
         return serverWritePermission;
-    }
-
-    public void setServerWritePermission(AtomicBoolean serverWritePermission) {
-        this.serverWritePermission = serverWritePermission;
     }
 }

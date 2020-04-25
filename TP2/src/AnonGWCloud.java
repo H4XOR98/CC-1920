@@ -33,7 +33,7 @@ public class AnonGWCloud {
             int id = this.clients.get(clientAddress);
             if (!this.requests.containsKey(id)) {
                 this.requests.put(id, request);
-                this.writePermissions.get(id).setServerWritePermission(new AtomicBoolean(true));
+                this.writePermissions.get(id).getServerWritePermission().set(true);
                 System.out.println("Request introduzido com sucesso ? " + this.requests.containsKey(id) + " request " + this.requests.get(id));
             }
         }
@@ -53,7 +53,7 @@ public class AnonGWCloud {
     public synchronized void insertReply(int id, byte[] content) {
         if(content != null && this.clients.containsValue(id) && !this.replys.containsKey(id)){
             this.replys.put(id,content);
-            this.writePermissions.get(id).setClientWritePermission(new AtomicBoolean(true));
+            this.writePermissions.get(id).getClientWritePermission().set(true);
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
     }
@@ -62,9 +62,10 @@ public class AnonGWCloud {
         byte[] content = null;
         if(this.clients.containsKey(clientAddress)){
             int id = this.clients.get(clientAddress);
-            if(this.replys.containsKey(id)){
+            if(this.replys.containsKey(id) && this.writePermissions.containsKey(id)){
                 content = this.replys.get(id).clone();
                 this.replys.remove(id);
+                this.writePermissions.remove(id);
                 this.clients.remove(clientAddress);
                 System.out.println("Reply :" + content);
             }
