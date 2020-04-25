@@ -12,7 +12,7 @@ public class ServerReader implements Runnable {
 
     @Override
     public void run() {
-        byte[] reply = new byte[1024];
+        byte[] reply = new byte[Constants.MaxBytesBuffer];
         try {
             while (this.connection.getIn().read(reply) != -1) {
                 this.cloud.insertReply(this.connection.getClientId(),reply);
