@@ -12,9 +12,8 @@ public class ClientReader implements Runnable {
     @Override
     public void run() {
         byte[] request = new byte[1024];
-        int numBytes;
         try {
-            while ((numBytes = this.connection.getIn().read(request)) != -1) {
+            while (this.connection.getIn().read(request) != -1) {
                 this.cloud.insertRequest(this.connection.getClientAddress(),request);
                 System.out.println(new String(request));
             }
