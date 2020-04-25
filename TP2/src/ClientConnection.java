@@ -27,12 +27,4 @@ public class ClientConnection {
     public String getClientAddress() {
         return clientAddress;
     }
-
-    public void close() throws IOException {
-        if(!this.socket.isClosed()){
-            this.out.close();
-            this.in.close();
-            this.socket.close();
-        }
-    }
 }

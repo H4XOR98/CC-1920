@@ -11,7 +11,7 @@ public class ClientReader implements Runnable {
 
     @Override
     public void run() {
-        byte[] request = new byte[Constants.MaxBytesBuffer];
+        byte[] request = new byte[Constants.MaxSizeBuffer];
         try {
             while (this.connection.getIn().read(request) != -1) {
                 this.cloud.insertRequest(this.connection.getClientAddress(),request);
