@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ServerReader implements Runnable {
     private AnonGWCloud cloud;
@@ -12,12 +11,16 @@ public class ServerReader implements Runnable {
 
     @Override
     public void run() {
-        int numBytes;
-        byte[] buffer = new byte[4096];
+        byte[] reply;
+        String line;
         try {
-            while ((numBytes = this.connection.getIn().read(buffer)) != -1);
-            this.cloud.insertReply(this.connection.getClientId(), Arrays.copyOfRange(buffer, 0, numBytes));
-            this.connection.close();
+            while ((line = this.connection.getIn().readLine()) != null){
+                reply = line.getBytes();
+                if(reply.length > 0){
+                    this.cloud.insertReply(this.connection.getClientId(), reply);
+                    this.connection.close();
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
