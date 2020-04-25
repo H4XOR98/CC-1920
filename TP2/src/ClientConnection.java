@@ -3,7 +3,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class ClientConnection implements IConnection{
+public class ClientConnection {
     private Socket socket;
     private InputStream in;
     private OutputStream out;
@@ -16,24 +16,12 @@ public class ClientConnection implements IConnection{
         this.clientAddress = socket.getInetAddress().getHostAddress();
     }
 
-
-    @Override
-    public void close() throws IOException {
-        if(!this.socket.isClosed()){
-            this.in.close();
-            this.out.close();
-            this.socket.close();
-        }
-    }
-
-    @Override
     public InputStream getIn() {
         return in;
-}
+    }
 
-    @Override
     public OutputStream getOut() {
-        return this.out;
+        return out;
     }
 
     public String getClientAddress() {

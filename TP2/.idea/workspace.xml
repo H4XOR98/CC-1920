@@ -3,10 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/TP2/META-INF/TP2.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/IConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/IConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Constants.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/IConnection.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,13 +20,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1b2dwbq58uYMEQuce9JAq7YUT7Y" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -34,10 +35,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -65,8 +64,6 @@
       <updated>1587834361161</updated>
       <workItem from="1587834362556" duration="1007000" />
       <workItem from="1587835550143" duration="4539000" />
-      <workItem from="1587842096661" duration="92000" />
-      <workItem from="1587842291620" duration="2719000" />
     </task>
     <servers />
   </component>
@@ -74,11 +71,11 @@
     <option name="version" value="1" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1587843646420">
+    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser" timestamp="1587840955942">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-745.1360.745@0.0.1680.1050" timestamp="1587834803654" />
-    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587843646420" />
+    <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587840955942" />
     <state x="505" y="248" key="run.anything.popup" timestamp="1587839270345">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

@@ -4,7 +4,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ServerConnection implements IConnection{
+public class ServerConnection {
     private Socket socket;
     private InputStream in;
     private OutputStream out;
@@ -17,29 +17,15 @@ public class ServerConnection implements IConnection{
         this.clientId = clientId;
     }
 
-
-    @Override
-    public void close() throws IOException {
-        if(!this.socket.isClosed()){
-            this.in.close();
-            this.out.close();
-            this.socket.close();
-        }
-    }
-
-    @Override
-    public InputStream getIn() {
-        return null;
-    }
-
-    @Override
-    public OutputStream getOut() {
-        return null;
-    }
-
-
-
     public int getClientId() {
         return clientId;
+    }
+
+    public InputStream getIn() {
+        return in;
+    }
+
+    public OutputStream getOut() {
+        return out;
     }
 }
