@@ -3,7 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ServerConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientWriter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ServerReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -64,6 +66,7 @@
       <workItem from="1587835550143" duration="4539000" />
       <workItem from="1587848778255" duration="49000" />
       <workItem from="1587849803282" duration="11000" />
+      <workItem from="1587849976958" duration="319000" />
     </task>
     <servers />
   </component>
