@@ -16,6 +16,7 @@ public class ServerReader implements Runnable {
         try {
             while (this.connection.getIn().read(reply) != -1) {
                 this.cloud.insertReply(this.connection.getClientId(),reply);
+                this.connection.close();
             }
         } catch (IOException e) {
             e.printStackTrace();
