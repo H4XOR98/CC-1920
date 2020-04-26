@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonGWCloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWCloud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/AnonGWMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/AnonGWMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ClientWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ClientWriter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ServerWriter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ServerWriter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +20,9 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1b2dwbq58uYMEQuce9JAq7YUT7Y" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -55,6 +63,7 @@
       <updated>1587834361161</updated>
       <workItem from="1587834362556" duration="1007000" />
       <workItem from="1587835550143" duration="4539000" />
+      <workItem from="1587863078671" duration="866000" />
     </task>
     <servers />
   </component>

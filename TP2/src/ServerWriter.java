@@ -1,12 +1,15 @@
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerWriter implements Runnable {
     private AnonGWCloud cloud;
     private ServerConnection connection;
+    private AtomicBoolean permission;
 
-    public ServerWriter(AnonGWCloud cloud, ServerConnection connection) {
+    public ServerWriter(AnonGWCloud cloud, ServerConnection connection, AtomicBoolean permission) {
         this.cloud = cloud;
         this.connection = connection;
+        this.permission = permission;
     }
 
     @Override
@@ -14,11 +17,14 @@ public class ServerWriter implements Runnable {
         byte[] request;
         try {
             while (true) {
-                request = this.cloud.getRequest(this.connection.getClientId());
-                if (request != null) {
-                    this.connection.getOut().write(request);
-                    this.connection.getOut().flush();
-                    Thread.currentThread().join();
+                if (this.permission.get()) {
+                    request = this.cloud.getRequest(this.connection.getClientId());
+                    if (request != null) {
+                        this.connection.getOut().write(request);
+                        this.connection.getOut().flush();
+                        this.permission.set(false);
+                        Thread.currentThread().join();
+                    }
                 }
             }
         } catch (IOException e) {
