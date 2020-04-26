@@ -32,7 +32,7 @@ public class AnonGWMain {
                 ServerConnection serverConnection = new ServerConnection(serverAddress, port, result);
                 new Thread(new ServerReader(cloud, serverConnection)).start();
                 new Thread(new ServerWriter(cloud, serverConnection, writerPermission.getServerWriterPermission())).start();
-                System.out.println("Socket Servidor Aberto para o cliente com id" + serverConnection.getClientId());
+                System.out.println("Socket Servidor Aberto para o cliente com id " + serverConnection.getClientId());
             }
         }
     }
