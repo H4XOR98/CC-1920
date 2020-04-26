@@ -23,7 +23,7 @@ public class AnonGWMain {
 
         while (true) {
             ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
-            WriterPermission wp = new WriterPermition();
+            WriterPermission wp = new WriterPermission();
             int result = cloud.insertClient(clientConnection.getClientAddress(), wp);
             new Thread(new ClientReader(cloud, clientConnection)).start();
             new Thread(new ClientWriter(cloud, clientConnection, wp.getClientWriterPermission())).start();

@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientWriter implements Runnable{
     private AnonGWCloud cloud;
@@ -15,13 +16,16 @@ public class ClientWriter implements Runnable{
     public void run() {
         byte[] reply;
         try{
-            while(this.permission.get()){
-                reply = this.cloud.getReply(this.connection.getClientAddress());
-                if(reply != null){
-                    this.connection.getOut().write(reply);
-                    this.connection.getOut().flush();
-                    this.permission.set(false);
-                }
+	    while(true){
+            	if(this.permission.get()){
+			System.out.println("aqui cliente");
+                	reply = this.cloud.getReply(this.connection.getClientAddress());
+                	if(reply != null){
+                    		this.connection.getOut().write(reply);
+                    		this.connection.getOut().flush();
+                    		this.permission.set(false);
+                	}
+		}
             }
         } catch (IOException e) {
             e.printStackTrace();

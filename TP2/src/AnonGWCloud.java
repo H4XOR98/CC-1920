@@ -56,6 +56,7 @@ public class AnonGWCloud {
             System.out.println("Reply introduzida com sucesso? " + this.replys.containsKey(id));
         }
         this.writerPermissions.get(id).getClientWriterPermission().set(true);
+	System.out.println(this.writerPermissions.get(id).getClientWriterPermission().get());
     }
 
     public synchronized byte[] getReply(String clientAddress){

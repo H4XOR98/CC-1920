@@ -1,3 +1,5 @@
+import java.util.concurrent.atomic.AtomicBoolean;
+
 
 public class WriterPermission {
 
@@ -14,6 +16,6 @@ public class WriterPermission {
     }
 
     public AtomicBoolean getServerWriterPermission() {
-        return this.serverWriterPermissionWriterPermission;
+        return this.serverWriterPermission;
     }
 }
