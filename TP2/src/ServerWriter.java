@@ -18,9 +18,12 @@ public class ServerWriter implements Runnable {
                 if (request != null) {
                     this.connection.getOut().write(request);
                     this.connection.getOut().flush();
+                    Thread.currentThread().join();
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

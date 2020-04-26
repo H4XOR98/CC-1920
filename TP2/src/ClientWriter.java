@@ -18,9 +18,13 @@ public class ClientWriter implements Runnable{
                 if(reply != null){
                     this.connection.getOut().write(reply);
                     this.connection.getOut().flush();
+                    this.connection.close();
+                    Thread.currentThread().join();
                 }
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
