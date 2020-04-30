@@ -16,20 +16,18 @@ public class ServerWriter implements Runnable {
     public void run() {
         byte[] request;
         try {
+	
             while (true) {
-                if (this.permission.get()) {
-                    request = this.cloud.getRequest(this.connection.getClientId());
-                    if (request != null) {
-                        this.connection.getOut().write(request);
-                        this.connection.getOut().flush();
-                        this.permission.set(false);
-                        Thread.currentThread().join();
-                    }
-                }
+		        if (this.permission.get()){
+                	request = this.cloud.getRequest(this.connection.getClientId());
+                	if (request != null) {
+                	    this.connection.getOut().write(request);
+                	    this.connection.getOut().flush();
+                	    this.permission.set(false);
+                	}
+		        }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

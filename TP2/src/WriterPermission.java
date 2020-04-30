@@ -1,6 +1,8 @@
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
 public class WriterPermission {
+
     private AtomicBoolean clientWriterPermission;
     private AtomicBoolean serverWriterPermission;
 

@@ -13,15 +13,18 @@ public class ServerReader implements Runnable {
     @Override
     public void run() {
         byte[] reply = new byte[Constants.MaxSizeBuffer];
+        byte[] result;
+        int numBytes;
         try {
-            while (this.connection.getIn().read(reply) != -1) {
-                this.cloud.insertReply(this.connection.getClientId(),reply);
-                this.connection.close();
-                Thread.currentThread().join();
+            while ((numBytes = this.connection.getIn().read(reply)) > 0) {
+                result = new byte[numBytes];
+                System.arraycopy(reply,0,result,0,numBytes);
+                this.cloud.insertReply(this.connection.getClientId(),result);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+            this.cloud.serverReadComplete(this.connection.getClientId());
+            this.connection.close();
+            Thread.currentThread().join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

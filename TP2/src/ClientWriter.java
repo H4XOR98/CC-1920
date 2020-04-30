@@ -15,23 +15,23 @@ public class ClientWriter implements Runnable{
     @Override
     public void run() {
         byte[] reply;
-        try{
-            while(true) {
+        try {
+	        while(true) {
                 if (this.permission.get()) {
-                    reply = this.cloud.getReply(this.connection.getClientAddress());
-                    if (reply != null) {
-                        this.connection.getOut().write(reply);
-                        this.connection.getOut().flush();
+                    if (this.cloud.removeClient(this.connection.getClientAddress())) {
                         this.permission.set(false);
                         this.connection.close();
                         Thread.currentThread().join();
                     }
+                    reply = this.cloud.getReply(this.connection.getClientAddress());
+                    if (reply != null) {
+                        this.connection.getOut().write(reply);
+                        this.connection.getOut().flush();
+                    }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException | IOException ex) {
+            ex.printStackTrace();
         }
     }
 }
