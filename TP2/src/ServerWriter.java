@@ -18,15 +18,14 @@ public class ServerWriter implements Runnable {
         try {
 	
             while (true) {
-		if (this.permission.get()){
-			System.out.println("aqui servidor");
+		        if (this.permission.get()){
                 	request = this.cloud.getRequest(this.connection.getClientId());
                 	if (request != null) {
-                    		this.connection.getOut().write(request);
-                    		this.connection.getOut().flush();
-                    		this.permission.set(false);
+                	    this.connection.getOut().write(request);
+                	    this.connection.getOut().flush();
+                	    this.permission.set(false);
                 	}
-		}
+		        }
             }
         } catch (IOException e) {
             e.printStackTrace();

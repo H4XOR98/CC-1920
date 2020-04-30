@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4f9f14f6-e95f-4401-a5dd-27e9183e8f2e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -15,6 +16,9 @@
         <option value="Class" />
       </list>
     </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1b2dwbq58uYMEQuce9JAq7YUT7Y" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -55,6 +59,8 @@
       <updated>1587834361161</updated>
       <workItem from="1587834362556" duration="1007000" />
       <workItem from="1587835550143" duration="4539000" />
+      <workItem from="1588161249410" duration="40000" />
+      <workItem from="1588258779319" duration="13000" />
     </task>
     <servers />
   </component>
@@ -67,6 +73,10 @@
     </state>
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-745.1360.745@0.0.1680.1050" timestamp="1587834803654" />
     <state x="653" y="233" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/170.-768.1360.768@0.0.1680.1050" timestamp="1587840955942" />
+    <state x="569" y="346" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1588161266433">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="569" y="346" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.0.1440.900@0.0.1440.900" timestamp="1588161266433" />
     <state x="505" y="248" key="run.anything.popup" timestamp="1587839270345">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

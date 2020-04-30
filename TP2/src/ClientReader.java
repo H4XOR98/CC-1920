@@ -16,7 +16,8 @@ public class ClientReader implements Runnable {
             while (this.connection.getIn().read(request) != -1) {
                 this.cloud.insertRequest(this.connection.getClientAddress(),request);
             }
-        } catch (IOException e) {
+            Thread.currentThread().join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
