@@ -12,9 +12,13 @@ public class ClientReader implements Runnable {
     @Override
     public void run() {
         byte[] request = new byte[Constants.MaxSizeBuffer];
+        byte[] result;
+        int numBytes;
         try {
-            while (this.connection.getIn().read(request) != -1) {
-                this.cloud.insertRequest(this.connection.getClientAddress(),request);
+            while ((numBytes = this.connection.getIn().read(request)) > 0) {
+                result = new byte[numBytes];
+                System.arraycopy(request,0,result,0,numBytes);
+                this.cloud.insertRequest(this.connection.getClientAddress(),result);
             }
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {
