@@ -1,27 +1,34 @@
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerWriter implements Runnable {
-    private AnonGWCloud cloud;
-    private ServerConnection connection;
 
-    public ServerWriter(AnonGWCloud cloud, ServerConnection connection) {
+    private AnonGWServerCloud cloud;
+    private TCPConnection connection;
+    private int sessionId;
+
+    public ServerWriter(AnonGWServerCloud cloud, TCPConnection connection, int sessionId) {
         this.cloud = cloud;
         this.connection = connection;
+        this.sessionId = sessionId;
     }
 
     @Override
     public void run() {
-        byte[] request;
+        Packet request;
         try {
             while (true) {
-                request = this.cloud.getRequest(this.connection.getClientId());
+                request = this.cloud.getRequestPacket(this.sessionId);
                 if (request != null) {
-                    this.connection.getOut().write(request);
+                    if(request.isLast()){
+                        break;
+                    }
+                    this.connection.getOut().write(request.getData());
                     this.connection.getOut().flush();
                 }
             }
-        } catch (IOException e) {
+            
+            Thread.currentThread().join();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

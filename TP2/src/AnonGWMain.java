@@ -1,37 +1,48 @@
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class AnonGWMain {
     public static void main(String[] args) throws IOException {
-        if (args.length < 6) {
+        /*if (args.length < 6) {
             throw new IllegalArgumentException("insuficient arguments");
+        }*/
+
+        String targetServerAddress = args[1];
+        if(!targetServerAddress.matches(Constants.IPV4Pattern) || targetServerAddress == null){
+            throw new IllegalArgumentException("target server format invalid");
         }
 
-        String serverAddress = args[1];
-        int port = Integer.parseInt(args[3]);
 
-        List<String> peers;
-        peers = new ArrayList<>();
-        for(int i = 6 ; i < args.length ; i++){
-            peers.add(args[i]);
+        List<InetAddress> overlayPeers = new ArrayList<>();
+        for(int i = 3 ; i < args.length ; i++){
+            if(args[i].matches(Constants.IPV4Pattern) && args[i] != null) {
+                overlayPeers.add(InetAddress.getByName(args[i]));
+            }
         }
 
-        ServerSocket anonGWSeverSocket = new ServerSocket(port);
-        AnonGWCloud cloud = new AnonGWCloud();
 
+
+        UDPConnection udpConnection = new UDPConnection();
+        AnonGWClientCloud clientCloud = new AnonGWClientCloud();
+        AnonGWServerCloud serverCloud = new AnonGWServerCloud(InetAddress.getByName(targetServerAddress), udpConnection);
+        Random randomize = new Random();
+
+        ServerSocket anonGWSeverSocket = new ServerSocket(Constants.TCPPort);
+
+        new Thread(new Receiver(clientCloud,serverCloud,udpConnection)).start();
+
+        int clientId;
         while (true) {
-            ClientConnection clientConnection = new ClientConnection(anonGWSeverSocket.accept());
-            int result = cloud.insertClient(clientConnection.getClientAddress());
-            new Thread(new ClientReader(cloud, clientConnection)).start();
-            new Thread(new ClientWriter(cloud, clientConnection)).start();
-            System.out.println("Cliente Aberto com id " + result);
-            if(result != -1){
-                ServerConnection serverConnection = new ServerConnection(serverAddress, port, result);
-                new Thread(new ServerReader(cloud, serverConnection)).start();
-                new Thread(new ServerWriter(cloud, serverConnection)).start();
-                System.out.println("Socket Servidor Aberto para o cliente com id" + serverConnection.getClientId());
+            TCPConnection tcpConnection = new TCPConnection(anonGWSeverSocket.accept());
+            clientId = clientCloud.insertClient(tcpConnection.getIPAddress());
+            if(clientId != -1) {
+                new Thread(new ClientReader(clientCloud, tcpConnection, clientId)).start();
+                InetAddress overlayPeer = overlayPeers.get(randomize.nextInt(overlayPeers.size()));
+                new Thread(new ClientSender(clientCloud,udpConnection,clientId,overlayPeer)).start();
             }
         }
     }
