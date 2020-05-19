@@ -22,7 +22,6 @@ public class ServerReader implements Runnable {
                 reply = new byte[numBytes];
                 System.arraycopy(result,0,reply,0,numBytes);
                 this.cloud.insertReply(sessionId, reply);
-		        System.out.println(new String(reply));
             }
             this.cloud.readComplete(sessionId);
 	        this.connection.close();

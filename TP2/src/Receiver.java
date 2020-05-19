@@ -29,6 +29,7 @@ public class Receiver implements Runnable{
 
                     // get InetAddress
                     InetAddress address = incomingPacket.getAddress();
+		    System.out.println(address.toString());
 
                     // Add Packet to AnonGWServerCloud
                     if (packet.getDestination() == Constants.ToServer) this.serverCloud.insertRequest(packet, address);

@@ -7,15 +7,17 @@ import java.util.Map;
 public class AnonGWServerCloud {
     UDPConnection udpConnection;
     InetAddress targetServerIP;
-    private Map<Integer, Integer> serverClients; //ClientId, SessionId
+    private Map<Integer, InetAddress> clientsOverlayPeer; //SessionId, overlayPeer
+    private Map<Integer, Integer> serverClients; //SessionId, ClientId
     private Map<Integer, Packets> requests; //SessionId, All requests packets
-    private Map<Integer, Packets> replys;
+    private Map<Integer, Packets> replys; //SessionId, All replys packets
 
     private static int SESSIONID = 0;
 
     public AnonGWServerCloud(InetAddress targetServerIP, UDPConnection udpConnection) {
         this.udpConnection = udpConnection;
         this.targetServerIP = targetServerIP;
+        this.clientsOverlayPeer = new HashMap<>();
         this.serverClients = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
@@ -27,32 +29,40 @@ public class AnonGWServerCloud {
      */
 
     private synchronized void insertClient(int clientId, InetAddress overlayPeer) throws IOException {
-        if(!this.serverClients.containsKey(clientId)){
-            this.serverClients.put(clientId, SESSIONID);
-            this.requests.put(SESSIONID, new Packets());
-            this.replys.put(SESSIONID, new Packets());
+        this.serverClients.put(SESSIONID, clientId);
+        this.clientsOverlayPeer.put(SESSIONID, overlayPeer);
+        this.requests.put(SESSIONID, new Packets());
+        this.replys.put(SESSIONID, new Packets());
 
-            TCPConnection tcpConnection = new TCPConnection(new Socket(targetServerIP, Constants.TCPPort));
-            new Thread(new ServerWriter(this, tcpConnection, SESSIONID)).start();
-            new Thread(new ServerReader(this, tcpConnection,SESSIONID)).start();
-            new Thread(new ServerSender(this, this.udpConnection,clientId,overlayPeer)).start();
+        TCPConnection tcpConnection = new TCPConnection(new Socket(targetServerIP, Constants.TCPPort));
+        new Thread(new ServerWriter(this, tcpConnection, SESSIONID)).start();
+        new Thread(new ServerReader(this, tcpConnection,SESSIONID)).start();
+        new Thread(new ServerSender(this, this.udpConnection,SESSIONID,overlayPeer)).start();
 
-            System.out.println("[AnonGWServerCloud -> insertClient]  :  " + clientId + " : " + SESSIONID);
-            SESSIONID++;
-        }
+        System.out.println("[AnonGWServerCloud -> insertClient]  :  " + clientId + " : " + SESSIONID);
+        SESSIONID++;
     }
 
     public synchronized void insertRequest(Packet packet, InetAddress overlayPeer) throws IOException {
         if (packet != null && overlayPeer != null) {
-            if (!this.serverClients.containsKey(packet.getId())) {
+
+            boolean exists = false;
+            for(int sessionId : this.serverClients.keySet()){
+                if(this.serverClients.get(sessionId) == packet.getId() && this.clientsOverlayPeer.get(sessionId).equals(overlayPeer)){
+                    exists = true;
+                }
+            }
+            if(!exists) {
                 this.insertClient(packet.getId(), overlayPeer);
             }
-            int sessionId = this.serverClients.get(packet.getId());
 
-            packet.setId(sessionId);
-
-            this.requests.get(sessionId).addPacket(packet);
-            System.out.println("[AnonGWServerCloud -> insertRequest]  :  " + packet.getSequenceNum() + " : " );
+            for(int sessionId : this.serverClients.keySet()){
+                if(packet.getId() == this.serverClients.get(sessionId)){
+                    packet.setId(sessionId);
+                    this.requests.get(sessionId).addPacket(packet);
+                    System.out.println("[AnonGWServerCloud -> insertRequest]  :  " + packet.getSequenceNum() + " : ");
+                }
+            }
         }
     }
 
@@ -79,20 +89,10 @@ public class AnonGWServerCloud {
 
     public synchronized void insertReply(int sessionId, byte[] reply) {
         if(this.replys.containsKey(sessionId)){
-            int clientIdentifier = -1;
-            for(int clientId : this.serverClients.keySet()){
-                if(sessionId == this.serverClients.get(clientId)){
-                    clientIdentifier = clientId;
-                    break;
-                }
-            }
-
-            if(clientIdentifier != -1){
-                Packets packets = this.replys.get(sessionId);
-                Packet packet = new Packet(clientIdentifier,packets.getSequenceNum(),false,Constants.ToClient, reply);
-                packets.addPacket(packet);
-                System.out.println("[AnonGWClientCloud -> insertReply]  :  " + sessionId);
-            }
+            Packets packets = this.replys.get(sessionId);
+            Packet packet = new Packet(this.serverClients.get(sessionId),packets.getSequenceNum(),false,Constants.ToClient, reply);
+            packets.addPacket(packet);
+            System.out.println("[AnonGWClientCloud -> insertReply]  :  " + sessionId);
         }
     }
 
@@ -100,19 +100,10 @@ public class AnonGWServerCloud {
     public synchronized void readComplete(int sessionId){
         if(this.replys.containsKey(sessionId)){
             Packets packets = this.replys.get(sessionId);
-            int clientIdentifier = -1;
-            for (int clientId : this.serverClients.keySet()){
-                if (sessionId == this.serverClients.get(clientId)){
-                    clientIdentifier = clientId;
-                    break;
-                }
-            }
-            if(clientIdentifier != -1){
-                Packet packet = new Packet(clientIdentifier, packets.getSequenceNum(), true, Constants.ToClient, "Last".getBytes());
-                packets.addPacket(packet);
-                packets.complete();
-                System.out.println("[AnonGWServerCloud -> readComplete]  :  " + clientIdentifier);
-            }
+            Packet packet = new Packet(this.serverClients.get(sessionId), packets.getSequenceNum(), true, Constants.ToClient, "Last".getBytes());
+            packets.addPacket(packet);
+            packets.complete();
+            System.out.println("[AnonGWServerCloud -> readComplete]  :  " + this.serverClients.get(sessionId));
         }
     }
 
@@ -124,7 +115,8 @@ public class AnonGWServerCloud {
             if(packet != null){
                 System.out.println("[AnonGWClientCloud -> getReplyPacket]  :  " + sessionId);
                 if(packet.isLast() && !this.requests.containsKey(sessionId)) {
-                    this.serverClients.remove(packet.getId());
+                    this.serverClients.remove(sessionId);
+                    this.clientsOverlayPeer.remove(sessionId);
                     this.replys.remove(sessionId);
                     System.out.println("Ultima Reply");
                 }
@@ -133,23 +125,3 @@ public class AnonGWServerCloud {
         return packet;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

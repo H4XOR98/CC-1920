@@ -17,13 +17,16 @@ public class ClientSender implements Runnable{
 
     @Override
     public void run() {
+	int i = 0 ;
         Packet packet;
         while (true){
             packet = this.cloud.getRequestPacket(clientId);
             if(packet != null) {
+		i++;
                 try {
                     DatagramPacket datagramPacket = new DatagramPacket(packet.toBytes(), packet.toBytes().length, overlayPeer, Constants.UDPPort);
                     this.connection.getDatagramSocket().send(datagramPacket);
+		    System.out.println(i);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

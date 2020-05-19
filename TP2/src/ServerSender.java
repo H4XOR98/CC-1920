@@ -5,13 +5,13 @@ import java.net.InetAddress;
 public class ServerSender implements Runnable{
     private AnonGWServerCloud cloud;
     private UDPConnection connection;
-    private int sessionId;
+    private int clientId;
     private InetAddress overlayPeer;
 
-    public ServerSender(AnonGWServerCloud cloud, UDPConnection connection, int sessionId, InetAddress overlayPeer) {
+    public ServerSender(AnonGWServerCloud cloud, UDPConnection connection, int clientId, InetAddress overlayPeer) {
         this.cloud = cloud;
         this.connection = connection;
-        this.sessionId = sessionId;
+        this.clientId = clientId;
         this.overlayPeer = overlayPeer;
     }
 
@@ -19,7 +19,7 @@ public class ServerSender implements Runnable{
     public void run() {
         Packet packet;
         while (true){
-            packet = this.cloud.getReplyPacket(this.sessionId);
+            packet = this.cloud.getReplyPacket(clientId);
             if(packet != null) {
                 try {
                     DatagramPacket datagramPacket = new DatagramPacket(packet.toBytes(), packet.toBytes().length, overlayPeer, Constants.UDPPort);
