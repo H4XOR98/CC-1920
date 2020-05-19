@@ -79,7 +79,6 @@ public class AnonGWServerCloud {
 
     public synchronized void insertReply(int sessionId, byte[] reply) {
         if(this.replys.containsKey(sessionId)){
-	    System.out.println("Tudo fdd");
             int clientIdentifier = -1;
             for(int clientId : this.serverClients.keySet()){
                 if(sessionId == this.serverClients.get(clientId)){

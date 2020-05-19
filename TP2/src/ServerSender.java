@@ -18,8 +18,7 @@ public class ServerSender implements Runnable{
     @Override
     public void run() {
         Packet packet;
-        boolean finish = false;
-        while (!finish){
+        while (true){
             packet = this.cloud.getReplyPacket(clientId);
             if(packet != null) {
                 try {
@@ -29,7 +28,7 @@ public class ServerSender implements Runnable{
                     e.printStackTrace();
                 }
                 if(packet.isLast()){
-                    finish = true;
+                    break;
                 }
             }
         }

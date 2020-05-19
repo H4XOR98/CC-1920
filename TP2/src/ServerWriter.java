@@ -26,7 +26,6 @@ public class ServerWriter implements Runnable {
                     this.connection.getOut().flush();
                 }
             }
-            
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

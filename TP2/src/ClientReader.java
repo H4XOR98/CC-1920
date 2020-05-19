@@ -24,7 +24,6 @@ public class ClientReader implements Runnable{
                 if(this.connection.getIn().available() == 0) break;
             }
             this.cloud.readComplete(clientId);
-            this.connection.closeIn();
             Thread.currentThread().join();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();

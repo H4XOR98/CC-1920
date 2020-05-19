@@ -22,12 +22,12 @@ public class ServerReader implements Runnable {
                 reply = new byte[numBytes];
                 System.arraycopy(result,0,reply,0,numBytes);
                 this.cloud.insertReply(sessionId, reply);
-		System.out.println(new String(reply));
+		        System.out.println(new String(reply));
             }
             this.cloud.readComplete(sessionId);
-	    this.connection.closeIn();
-	    this.connection.closeOut();
-	    this.connection.closeSocket();
+	        this.connection.closeIn();
+	        this.connection.closeOut();
+	        this.connection.closeSocket();
             Thread.currentThread().join();
         }
         catch (IOException | InterruptedException e) {

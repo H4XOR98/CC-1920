@@ -41,6 +41,7 @@ public class AnonGWMain {
             clientId = clientCloud.insertClient(tcpConnection.getIPAddress());
             if(clientId != -1) {
                 new Thread(new ClientReader(clientCloud, tcpConnection, clientId)).start();
+                new Thread(new ClientWriter(clientCloud,tcpConnection)).start();
                 InetAddress overlayPeer = overlayPeers.get(randomize.nextInt(overlayPeers.size()));
                 new Thread(new ClientSender(clientCloud,udpConnection,clientId,overlayPeer)).start();
             }

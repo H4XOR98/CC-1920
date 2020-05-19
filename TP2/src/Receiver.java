@@ -32,8 +32,7 @@ public class Receiver implements Runnable{
 
                     // Add Packet to AnonGWServerCloud
                     if (packet.getDestination() == Constants.ToServer) this.serverCloud.insertRequest(packet, address);
-                    else System.out.println("Para o cliente" + packet.getDestination());
-
+                    else this.clientCloud.insertReply(packet);
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
