@@ -20,15 +20,11 @@ public class ClientWriter implements Runnable{
                     if (reply.isLast()){
                         break;
                     }
-                    else {
-                        this.connection.getOut().write(reply.getData());
-                        this.connection.getOut().flush();
-                    }
+                    this.connection.getOut().write(reply.getData());
+                    this.connection.getOut().flush();
                 }
             }
-            this.connection.closeIn();
-            this.connection.closeOut();
-            this.connection.closeSocket();
+            this.connection.close();
             Thread.currentThread().join();
         }
         catch (InterruptedException | IOException ex) {

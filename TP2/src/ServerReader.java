@@ -25,9 +25,7 @@ public class ServerReader implements Runnable {
 		        System.out.println(new String(reply));
             }
             this.cloud.readComplete(sessionId);
-	        this.connection.closeIn();
-	        this.connection.closeOut();
-	        this.connection.closeSocket();
+	        this.connection.close();
             Thread.currentThread().join();
         }
         catch (IOException | InterruptedException e) {

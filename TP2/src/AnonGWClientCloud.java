@@ -1,29 +1,39 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.*;
 
 public class AnonGWClientCloud {
+    private UDPConnection udpConnection;
+    private List<InetAddress> overlayPeers;
     private Map<String, Integer> clients;
     private Map<Integer, Packets> requests;
     private Map<Integer, Packets> replys;
 
     private static int CLIENTID = 0;
 
-    public AnonGWClientCloud() {
+    public AnonGWClientCloud(UDPConnection udpConnection, List<InetAddress> overlayPeers) {
+        this.udpConnection = udpConnection;
+        this.overlayPeers = overlayPeers;
         this.clients = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
     }
 
-    public synchronized int insertClient(String clientAddress) {
-        int clientId = -1;
-        if(clientAddress != null && !this.clients.containsKey(clientAddress)){
-           this.clients.put(clientAddress,CLIENTID);
+    public synchronized void insertClient(Socket socket) throws IOException {
+        TCPConnection tcpConnection = new TCPConnection(socket);
+        if(tcpConnection.getIPAddress() != null && !this.clients.containsKey(tcpConnection.getIPAddress())){
+           this.clients.put(tcpConnection.getIPAddress(),CLIENTID);
            this.requests.put(CLIENTID, new Packets());
            this.replys.put(CLIENTID, new Packets());
-           clientId = CLIENTID;
-           CLIENTID++;
+
+            Random randomize = new Random();
+            new Thread(new ClientReader(this, tcpConnection, CLIENTID)).start();
+            new Thread(new ClientWriter(this,tcpConnection)).start();
+            InetAddress overlayPeer = overlayPeers.get(randomize.nextInt(overlayPeers.size()));
+            new Thread(new ClientSender(this,this.udpConnection,CLIENTID,overlayPeer)).start();
+            CLIENTID++;
         }
-        return clientId;
     }
 
 

@@ -123,7 +123,7 @@ public class AnonGWServerCloud {
             packet = this.replys.get(sessionId).pollPacket();
             if(packet != null){
                 System.out.println("[AnonGWClientCloud -> getReplyPacket]  :  " + sessionId);
-                if(packet.isLast()) {
+                if(packet.isLast() && !this.requests.containsKey(sessionId)) {
                     this.serverClients.remove(packet.getId());
                     this.replys.remove(sessionId);
                     System.out.println("Ultima Reply");
@@ -132,9 +132,6 @@ public class AnonGWServerCloud {
         }
         return packet;
     }
-
-
-
 }
 
 
