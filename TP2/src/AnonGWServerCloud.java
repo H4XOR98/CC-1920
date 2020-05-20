@@ -6,16 +6,18 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AnonGWServerCloud {
-    ReentrantLock clientsLock = new ReentrantLock();
-    ReentrantLock requestsLock = new ReentrantLock();
-    ReentrantLock replysLock = new ReentrantLock();
+    private ReentrantLock clientsLock = new ReentrantLock();
+    private ReentrantLock requestsLock = new ReentrantLock();
+    private ReentrantLock replysLock = new ReentrantLock();
+    private ReentrantLock permissionsLock = new ReentrantLock();
 
-    UDPConnection udpConnection;
-    InetAddress targetServerIP;
+    private UDPConnection udpConnection;
+    private InetAddress targetServerIP;
     private Map<Integer, InetAddress> clientsOverlayPeer; // SessionId, overlayPeer
     private Map<Integer, Integer> serverClients;          // SessionId, ClientId
     private Map<Integer, Packets> requests;               // SessionId, All requests packets
     private Map<Integer, Packets> replys;                 // SessionId, All replys packets
+    private Map<Integer, ServerCloudPermissions> permissions; //SessionId
 
     private static int SESSIONID = 0;
 
@@ -26,6 +28,7 @@ public class AnonGWServerCloud {
         this.serverClients = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
+        this.permissions = new HashMap<>();
     }
 
     private int insertClient(int clientId, InetAddress overlayPeer) throws IOException {
@@ -43,6 +46,12 @@ public class AnonGWServerCloud {
                 sessionId = SESSIONID++;
                 this.serverClients.put(sessionId, clientId);
                 this.clientsOverlayPeer.put(sessionId, overlayPeer);
+
+                ServerCloudPermissions permissions = new ServerCloudPermissions();
+                this.permissionsLock.lock();
+                this.permissions.put(sessionId, permissions);
+                this.permissionsLock.unlock();
+
                 this.requestsLock.lock();
                 this.requests.put(sessionId, new Packets());
                 this.requestsLock.unlock();
@@ -52,9 +61,9 @@ public class AnonGWServerCloud {
                 this.replysLock.unlock();
 
                 TCPConnection tcpConnection = new TCPConnection(new Socket(targetServerIP, Constants.TCPPort));
-                new Thread(new ServerWriter(this, tcpConnection, sessionId)).start();
-                new Thread(new ServerReader(this, tcpConnection, sessionId)).start();
-                new Thread(new ServerSender(this, this.udpConnection, sessionId, overlayPeer)).start();
+                new Thread(new ServerWriter(this, tcpConnection, permissions.getServerWriterPermission(), sessionId)).start();
+                new Thread(new ServerReader(this, tcpConnection, permissions.getServerReaderPermission(), sessionId)).start();
+                new Thread(new ServerSender(this, this.udpConnection, permissions.getServerSenderPermission(), sessionId, overlayPeer)).start();
 
                 System.out.println("[client " + clientId + "] inserted in AnonGWServerCloud with sessionId = " + sessionId);
 
@@ -62,6 +71,10 @@ public class AnonGWServerCloud {
         } catch (IOException e) {
             this.serverClients.remove(sessionId);
             this.clientsOverlayPeer.remove(sessionId);
+
+            this.permissionsLock.lock();
+            this.permissions.remove(sessionId);
+            this.permissionsLock.unlock();
 
             this.requestsLock.lock();
             this.requests.remove(sessionId);
@@ -94,6 +107,12 @@ public class AnonGWServerCloud {
                 this.requestsLock.lock();
                 this.requests.get(sessionId).addPacket(packet);
                 this.requestsLock.unlock();
+
+                this.permissionsLock.lock();
+                ServerCloudPermissions serverPermissions = this.permissions.get(sessionId);
+                if(!serverPermissions.getServerWriterPermission().get()) serverPermissions.aproveServerWriterPermission();
+                this.permissionsLock.unlock();
+
                 //System.out.println("[session " + sessionIdentifier + "] request inserted in AnonGWServerCloud");
             }
         }
@@ -104,6 +123,12 @@ public class AnonGWServerCloud {
         Packet packet = null;
         this.requestsLock.lock();
         if(this.requests.containsKey(sessionId)){
+
+            this.permissionsLock.lock();
+            ServerCloudPermissions serverPermissions = this.permissions.get(sessionId);
+            if(!serverPermissions.getServerReaderPermission().get()) serverPermissions.aproveServerReaderPermission();
+            this.permissionsLock.unlock();
+
             packet = this.requests.get(sessionId).pollPacket();
             if(packet != null) {
                 if (packet.isLast()) {
@@ -128,6 +153,12 @@ public class AnonGWServerCloud {
             Packet packet = new Packet(this.serverClients.get(sessionId),packets.getSequenceNum(),false,Constants.ToClient, reply);
             this.clientsLock.unlock();
             packets.addPacket(packet);
+
+            this.permissionsLock.lock();
+            ServerCloudPermissions serverPermissions = this.permissions.get(sessionId);
+            if(!serverPermissions.getServerSenderPermission().get()) serverPermissions.aproveServerSenderPermission();
+            this.permissionsLock.unlock();
+
             //System.out.println("[session " + sessionId + "] reply inserted in AnonGWServerCloud");
         }
         this.replysLock.unlock();
@@ -160,6 +191,11 @@ public class AnonGWServerCloud {
                     this.serverClients.remove(sessionId);
                     this.clientsOverlayPeer.remove(sessionId);
                     this.clientsLock.unlock();
+
+                    this.permissionsLock.lock();
+                    this.permissions.remove(sessionId);
+                    this.permissionsLock.unlock();
+
                     this.replys.remove(sessionId);
                 }
                 this.requestsLock.unlock();

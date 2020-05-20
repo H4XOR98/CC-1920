@@ -1,14 +1,17 @@
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerReader implements Runnable {
 
     private AnonGWServerCloud cloud;
     private TCPConnection connection;
+    private AtomicBoolean permission;
     private int sessionId;
 
-    public ServerReader(AnonGWServerCloud cloud, TCPConnection connection, int sessionId) {
+    public ServerReader(AnonGWServerCloud cloud, TCPConnection connection, AtomicBoolean permission, int sessionId) {
         this.cloud = cloud;
         this.connection = connection;
+        this.permission = permission;
         this.sessionId = sessionId;
     }
 
@@ -18,10 +21,17 @@ public class ServerReader implements Runnable {
         byte[] reply;
         int numBytes;
         try {
-            while ((numBytes = this.connection.getIn().read(result)) != -1) {
-                reply = new byte[numBytes];
-                System.arraycopy(result,0,reply,0,numBytes);
-                this.cloud.insertReply(sessionId, reply);
+            while(true) {
+                if(this.permission.get()) {
+                    while ((numBytes = this.connection.getIn().read(result)) != -1) {
+                        reply = new byte[numBytes];
+                        System.arraycopy(result, 0, reply, 0, numBytes);
+                        this.cloud.insertReply(sessionId, reply);
+                    }
+                    if(numBytes == -1){
+                        break;
+                    }
+                }
             }
             this.cloud.readComplete(sessionId);
 	        this.connection.close();
