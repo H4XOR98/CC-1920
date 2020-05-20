@@ -16,6 +16,9 @@ public class Packets {
         if(packet != null && !this.complete) {
             this.packets.add(packet);
             this.sequenceNum++;
+            if(packet.isLast()){
+                this.complete = true;
+            }
         }
     }
 
@@ -25,14 +28,6 @@ public class Packets {
             packet = this.packets.poll();
         }
         return packet;
-    }
-
-    public boolean isComplete() {
-        return this.complete;
-    }
-
-    public void complete() {
-        this.complete = true;
     }
 
     public int getSequenceNum() {

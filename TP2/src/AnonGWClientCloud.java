@@ -2,17 +2,20 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class AnonGWClientCloud {
     private ReentrantLock clientsLock = new ReentrantLock();
     private ReentrantLock requestsLock = new ReentrantLock();
     private ReentrantLock replysLock = new ReentrantLock();
+    private ReentrantLock permissionsLock = new ReentrantLock();
 
 
     private UDPConnection udpConnection;
     private List<InetAddress> overlayPeers;
     private Map<String, Integer> clients;
+    private Map<Integer, ClientCloudPermissions> permissions;
     private Map<Integer, Packets> requests;
     private Map<Integer, Packets> replys;
 
@@ -22,6 +25,7 @@ public class AnonGWClientCloud {
         this.udpConnection = udpConnection;
         this.overlayPeers = overlayPeers;
         this.clients = new HashMap<>();
+        this.permissions = new HashMap<>();
         this.requests = new HashMap<>();
         this.replys = new HashMap<>();
     }
@@ -29,14 +33,14 @@ public class AnonGWClientCloud {
     public void insertClient(Socket socket) throws IOException {
         TCPConnection tcpConnection = new TCPConnection(socket);
         this.clientsLock.lock();
-        boolean clientExists = this.clients.containsKey(tcpConnection.getIPAddress());
-        this.clientsLock.unlock();
-
-        if(tcpConnection.getIPAddress() != null && !clientExists){
-            this.clientsLock.lock();
+        if(tcpConnection.getIPAddress() != null && !this.clients.containsKey(tcpConnection.getIPAddress())){
             int clientId = CLIENTID++;
             this.clients.put(tcpConnection.getIPAddress(),clientId);
-            this.clientsLock.unlock();
+
+            ClientCloudPermissions permissions = new ClientCloudPermissions();
+            this.permissionsLock.lock();
+            this.permissions.put(clientId, permissions);
+            this.permissionsLock.unlock();
 
             this.requestsLock.lock();
             this.requests.put(clientId, new Packets());
@@ -48,11 +52,12 @@ public class AnonGWClientCloud {
 
             Random randomize = new Random();
             new Thread(new ClientReader(this, tcpConnection, clientId)).start();
-            new Thread(new ClientWriter(this,tcpConnection)).start();
+            new Thread(new ClientWriter(this, tcpConnection, permissions.getClientWriterPermission())).start();
             InetAddress overlayPeer = overlayPeers.get(randomize.nextInt(overlayPeers.size()));
-            new Thread(new ClientSender(this,this.udpConnection,clientId,overlayPeer)).start();
+            new Thread(new ClientSender(this, this.udpConnection, permissions.getClientSenderPermission(), clientId, overlayPeer)).start();
             System.out.println("[client " + clientId + "] inserted in AnonGWClientCloud");
         }
+        this.clientsLock.unlock();
     }
 
     /*
@@ -66,6 +71,10 @@ public class AnonGWClientCloud {
             Packets packets = this.requests.get(clientId);
             Packet packet = new Packet(clientId,packets.getSequenceNum(),false,Constants.ToServer,request);
             this.requests.get(clientId).addPacket(packet);
+            this.permissionsLock.lock();
+            ClientCloudPermissions clientPermissions = this.permissions.get(clientId);
+            if(!clientPermissions.getClientSenderPermission().get()) clientPermissions.aproveClientSenderPermssion();
+            this.permissionsLock.unlock();
         }
         this.requestsLock.unlock();
     }
@@ -77,7 +86,6 @@ public class AnonGWClientCloud {
             Packets packets = this.requests.get(clientId);
             Packet packet = new Packet(clientId,packets.getSequenceNum(),true,Constants.ToServer,"Last".getBytes());
             packets.addPacket(packet);
-            packets.complete();
             System.out.println("[client " + clientId + "] all requests inserted in AnonGWClientCloud");
         }
         this.requestsLock.unlock();
@@ -111,9 +119,12 @@ public class AnonGWClientCloud {
             packets.addPacket(packet);
             //System.out.println("[client " + packet.getId() + "] reply inserted in AnonGWClientCloud");
             if(packet.isLast()){
-                packets.complete();
                 System.out.println("[client " + packet.getId() + "] all replies inserted in AnonGWClientCloud");
             }
+            this.permissionsLock.lock();
+            ClientCloudPermissions clientPermissions = this.permissions.get(packet.getId());
+            if(!clientPermissions.getClientWriterPermission().get()) clientPermissions.aproveClientWriterPermission();
+            this.permissionsLock.unlock();
         }
         this.replysLock.unlock();
     }
@@ -121,27 +132,28 @@ public class AnonGWClientCloud {
     // get reply to send through TCP
     public Packet getReplyPacket(String clientAddress){
         Packet packet = null;
-        int clientId = -1;
         this.clientsLock.lock();
         if(this.clients.containsKey(clientAddress)){
-           clientId = this.clients.get(clientAddress);
-        }
-        this.clientsLock.unlock();
+            int clientId = this.clients.get(clientAddress);
+            this.replysLock.lock();
+            if(clientAddress != null && this.replys.containsKey(clientId)){
+                Packets packets = this.replys.get(clientId);
+                packet = packets.pollPacket();
+                if(packet != null){
+                    if(packet.isLast()) {
+                        this.replys.remove(clientId);
 
-        this.replysLock.lock();
-        if(clientId != -1 && clientAddress != null && this.replys.containsKey(clientId)){
-            Packets packets = this.replys.get(clientId);
-            packet = packets.pollPacket();
-            if(packet != null){
-                if(packet.isLast()) {
-                    this.replys.remove(clientId);
-                    this.clientsLock.lock();
-                    this.clients.remove(clientAddress);
-                    this.clientsLock.unlock();
+                        this.permissionsLock.lock();
+                        this.permissions.remove(clientId);
+                        this.permissionsLock.unlock();
+
+                        this.clients.remove(clientAddress);
+                    }
                 }
             }
+            this.replysLock.unlock();
         }
-        this.replysLock.unlock();
+        this.clientsLock.unlock();
         return packet;
     }
 }
