@@ -8,7 +8,7 @@ public class UDPConnection{
         this.datagramSocket = new DatagramSocket(Constants.UDPPort);
     }
 
-    public synchronized DatagramSocket getDatagramSocket() {
+    public DatagramSocket getDatagramSocket() {
         return this.datagramSocket;
     }
 }

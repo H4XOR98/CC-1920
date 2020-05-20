@@ -3,8 +3,13 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AnonGWServerCloud {
+    ReentrantLock clientsLock = new ReentrantLock();
+    ReentrantLock requestsLock = new ReentrantLock();
+    ReentrantLock replysLock = new ReentrantLock();
+
     UDPConnection udpConnection;
     InetAddress targetServerIP;
     private Map<Integer, InetAddress> clientsOverlayPeer; // SessionId, overlayPeer
@@ -23,19 +28,45 @@ public class AnonGWServerCloud {
         this.replys = new HashMap<>();
     }
 
-    private synchronized int insertClient(int clientId, InetAddress overlayPeer) throws IOException {
-        this.serverClients.put(SESSIONID, clientId);
-        this.clientsOverlayPeer.put(SESSIONID, overlayPeer);
-        this.requests.put(SESSIONID, new Packets());
-        this.replys.put(SESSIONID, new Packets());
+    private int insertClient(int clientId, InetAddress overlayPeer) throws IOException {
+        this.clientsLock.lock();
+        int sessionId = SESSIONID++;
+        this.serverClients.put(sessionId, clientId);
+        this.clientsOverlayPeer.put(sessionId, overlayPeer);
+        this.clientsLock.unlock();
 
-        TCPConnection tcpConnection = new TCPConnection(new Socket(targetServerIP, Constants.TCPPort));
-        new Thread(new ServerWriter(this, tcpConnection, SESSIONID)).start();
-        new Thread(new ServerReader(this, tcpConnection,SESSIONID)).start();
-        new Thread(new ServerSender(this, this.udpConnection,SESSIONID,overlayPeer)).start();
+        this.requestsLock.lock();
+        this.requests.put(sessionId, new Packets());
+        this.requestsLock.unlock();
 
-        System.out.println("[client " + clientId + "] inserted in AnonGWServerCloud with sessionId = " + SESSIONID);
-        return SESSIONID++;
+        this.replysLock.lock();
+        this.replys.put(sessionId, new Packets());
+        this.replysLock.unlock();
+
+        try {
+            TCPConnection tcpConnection = new TCPConnection(new Socket(targetServerIP, Constants.TCPPort));
+            new Thread(new ServerWriter(this, tcpConnection, sessionId)).start();
+            new Thread(new ServerReader(this, tcpConnection, sessionId)).start();
+            new Thread(new ServerSender(this, this.udpConnection, sessionId, overlayPeer)).start();
+
+            System.out.println("[client " + clientId + "] inserted in AnonGWServerCloud with sessionId = " + sessionId);
+        }catch (IOException e){
+            this.clientsLock.lock();
+            this.serverClients.remove(sessionId);
+            this.clientsOverlayPeer.remove(sessionId);
+            this.clientsLock.unlock();
+
+            this.requestsLock.lock();
+            this.requests.remove(sessionId);
+            this.requestsLock.unlock();
+
+            this.replysLock.lock();
+            this.replys.remove(sessionId);
+            this.replysLock.unlock();
+
+            throw new IOException(e);
+        }
+        return sessionId;
     }
 
     /*
@@ -43,31 +74,40 @@ public class AnonGWServerCloud {
     */
 
     // insert request from UDP
-    public synchronized void insertRequest(Packet packet, InetAddress overlayPeer) throws IOException {
+    public void insertRequest(Packet packet, InetAddress overlayPeer) throws IOException {
         if (packet != null && overlayPeer != null) {
             int sessionIdentifier = -1;
             boolean exists = false;
+            this.clientsLock.lock();
             for(int sessionId : this.serverClients.keySet()){
                 if(this.serverClients.get(sessionId) == packet.getId() && this.clientsOverlayPeer.get(sessionId).equals(overlayPeer)){
                     exists = true;
                     sessionIdentifier = sessionId;
                 }
             }
+            this.clientsLock.unlock();
+
             if(!exists) {
                 sessionIdentifier = this.insertClient(packet.getId(), overlayPeer);
             }
 
-            if(sessionIdentifier != -1 && packet.getId() == this.serverClients.get(sessionIdentifier)){
+            this.clientsLock.lock();
+            int clientId = this.serverClients.get(sessionIdentifier);
+            this.clientsLock.unlock();
+            if(sessionIdentifier != -1 && packet.getId() == clientId){
                 packet.setId(sessionIdentifier);
+                this.requestsLock.lock();
                 this.requests.get(sessionIdentifier).addPacket(packet);
+                this.requestsLock.unlock();
                 //System.out.println("[session " + sessionIdentifier + "] request inserted in AnonGWServerCloud");
             }
         }
     }
 
     // get request to send through TCP
-    public synchronized Packet getRequestPacket(int sessionId) {
+    public Packet getRequestPacket(int sessionId) {
         Packet packet = null;
+        this.requestsLock.lock();
         if(this.requests.containsKey(sessionId)){
             packet = this.requests.get(sessionId).pollPacket();
             if(packet != null) {
@@ -76,6 +116,7 @@ public class AnonGWServerCloud {
                 }
             }
         }
+        this.requestsLock.unlock();
         return packet;
     }
 
@@ -85,38 +126,55 @@ public class AnonGWServerCloud {
 
     // insert reply from TCP
     public synchronized void insertReply(int sessionId, byte[] reply) {
+        this.replysLock.lock();
         if(this.replys.containsKey(sessionId)){
             Packets packets = this.replys.get(sessionId);
-            Packet packet = new Packet(this.serverClients.get(sessionId),packets.getSequenceNum(),false,Constants.ToClient, reply);
+            this.clientsLock.lock();
+            int clientId = this.serverClients.get(sessionId);
+            this.clientsLock.unlock();
+            Packet packet = new Packet(clientId,packets.getSequenceNum(),false,Constants.ToClient, reply);
             packets.addPacket(packet);
             //System.out.println("[session " + sessionId + "] reply inserted in AnonGWServerCloud");
         }
+        this.replysLock.unlock();
     }
 
     // insert final packet to sinal that all replys were read
     public synchronized void readComplete(int sessionId){
+        this.replysLock.lock();
         if(this.replys.containsKey(sessionId)){
             Packets packets = this.replys.get(sessionId);
-            Packet packet = new Packet(this.serverClients.get(sessionId), packets.getSequenceNum(), true, Constants.ToClient, "Last".getBytes());
+            this.clientsLock.lock();
+            int clientId =this.serverClients.get(sessionId);
+            this.clientsLock.unlock();
+            Packet packet = new Packet(clientId, packets.getSequenceNum(), true, Constants.ToClient, "Last".getBytes());
             packets.addPacket(packet);
             packets.complete();
             System.out.println("[session " + sessionId + "] all replies inserted in AnonGWServerCloud");
         }
+        this.replysLock.unlock();
     }
 
     // get reply to send through UDP
     public synchronized Packet getReplyPacket(int sessionId){
         Packet packet = null;
+        this.replysLock.lock();
         if(this.replys.containsKey(sessionId)){
             packet = this.replys.get(sessionId).pollPacket();
             if(packet != null){
-                if(packet.isLast() && !this.requests.containsKey(sessionId)) {
+                this.requestsLock.lock();
+                boolean existsRequests = this.requests.containsKey(sessionId);
+                this.requestsLock.unlock();
+                if(packet.isLast() && !existsRequests) {
+                    this.clientsLock.lock();
                     this.serverClients.remove(sessionId);
                     this.clientsOverlayPeer.remove(sessionId);
+                    this.clientsLock.unlock();
                     this.replys.remove(sessionId);
                 }
             }
         }
+        this.replysLock.unlock();
         return packet;
     }
 }
