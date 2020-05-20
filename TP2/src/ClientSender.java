@@ -26,11 +26,13 @@ public class ClientSender implements Runnable{
                 try {
                     DatagramPacket datagramPacket = new DatagramPacket(packet.toBytes(), packet.toBytes().length, overlayPeer, Constants.UDPPort);
                     this.connection.getDatagramSocket().send(datagramPacket);
+                    //System.out.println("[client " + clientId + "] request sent through UDP");
 		    System.out.println(i);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 if(packet.isLast()){
+                    System.out.println("[client " + clientId + "] all requests sent through UDP");
                     break;
                 }
             }
