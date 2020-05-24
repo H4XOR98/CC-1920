@@ -20,4 +20,7 @@ public class Constants {
     public static final String ALGORITHM = "AES";
     public static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
     public static final byte[] Key = "1234567890123456".getBytes();
+
+    //Overlay-peers
+    public static final int MinOverlayPeers = 1;
 }

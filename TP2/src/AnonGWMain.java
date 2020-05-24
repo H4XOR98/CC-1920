@@ -25,6 +25,8 @@ public class AnonGWMain {
             }
         }
 
+        if (overlayPeers.size() < Constants.MinOverlay)
+
         UDPConnection udpConnection = new UDPConnection();
         AnonGWClientCloud clientCloud = new AnonGWClientCloud(udpConnection, overlayPeers);
         AnonGWServerCloud serverCloud = new AnonGWServerCloud(InetAddress.getByName(targetServerAddress), udpConnection);
