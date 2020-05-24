@@ -8,9 +8,9 @@ import java.util.List;
 public class AnonGWMain {
     public static void main(String[] args) throws IOException {
         
-        /*if (args.length < 6) {
+        if (args.length < 5) {
             throw new IllegalArgumentException("insuficient arguments");
-        }*/
+        }
 
         String targetServerAddress = args[1];
         if(!targetServerAddress.matches(Constants.IPV4Pattern) || targetServerAddress == null){

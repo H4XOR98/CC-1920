@@ -15,4 +15,9 @@ public class Constants {
 
     //IPV4 Pattern
     public static final String IPV4Pattern = "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})(\\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[0-9]{1,2})){3}$";
+
+    //Encryption
+    public static final String ALGORITHM = "AES";
+    public static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
+    public static final byte[] Key = "1234567890123456".getBytes();
 }

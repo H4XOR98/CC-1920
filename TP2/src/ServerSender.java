@@ -27,14 +27,13 @@ public class ServerSender implements Runnable{
     public void run() {
         Packet packet;
         Encryptor encryptor = new Encryptor();
-        byte[] key = "1234567890123456".getBytes();
         byte[] encryptedData;
         while (true){
             if(this.permission.get()) {
                 packet = this.cloud.getReplyPacket(sessionId);
                 if (packet != null) {
                     try {
-                        encryptedData = encryptor.encryptMessage(packet.getData(), key);
+                        encryptedData = encryptor.encryptMessage(packet.getData());
                         packet.setData(encryptedData);
                         DatagramPacket datagramPacket = new DatagramPacket(packet.toBytes(), packet.toBytes().length, overlayPeer, Constants.UDPPort);
                         this.connection.getDatagramSocket().send(datagramPacket);

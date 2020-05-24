@@ -22,7 +22,6 @@ public class Receiver implements Runnable{
     public void run() {
         byte[] incomingData = new byte[Constants.MaxSizePacket];
         Encryptor encryptor = new Encryptor();
-        byte[] key = "1234567890123456".getBytes();
         byte[] decryptedData;
 
         while (true) {
@@ -34,7 +33,7 @@ public class Receiver implements Runnable{
                 if(incomingPacket != null){
                     // get Packet
                     Packet packet = new Packet(incomingPacket.getData());
-                    decryptedData = encryptor.decryptMessage(packet.getData(), key);
+                    decryptedData = encryptor.decryptMessage(packet.getData());
                     packet.setData(decryptedData);
 
                     // get InetAddress
