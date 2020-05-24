@@ -21,6 +21,6 @@ public class Constants {
     public static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
     public static final byte[] Key = "1234567890123456".getBytes();
 
-    //Overlay-peers
+    //Overlay-Peers
     public static final int MinOverlayPeers = 1;
 }

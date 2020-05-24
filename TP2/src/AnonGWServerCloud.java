@@ -17,7 +17,7 @@ public class AnonGWServerCloud {
     private Map<Integer, Integer> serverClients;              // SessionId, ClientId
     private Map<Integer, Packets> requests;                   // SessionId, All requests packets
     private Map<Integer, Packets> replies;                    // SessionId, All replies packets
-    private Map<Integer, ServerCloudPermissions> permissions; //SessionId
+    private Map<Integer, ServerCloudPermissions> permissions; // SessionId
 
     private static int SESSIONID = 0;
 

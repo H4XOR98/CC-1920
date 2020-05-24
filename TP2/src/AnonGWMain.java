@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnonGWMain {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException , IllegalArgumentException{
         
         if (args.length < 5) {
             throw new IllegalArgumentException("insuficient arguments");
@@ -25,7 +25,9 @@ public class AnonGWMain {
             }
         }
 
-        if (overlayPeers.size() < Constants.MinOverlay)
+        if (overlayPeers.size() < Constants.MinOverlayPeers){
+            throw new IllegalArgumentException("not enough overlay-peers");
+        }
 
         UDPConnection udpConnection = new UDPConnection();
         AnonGWClientCloud clientCloud = new AnonGWClientCloud(udpConnection, overlayPeers);
