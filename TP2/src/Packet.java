@@ -65,4 +65,8 @@ public class Packet implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public void setData (byte[] data){
+        this.data = data;
+    }
 }

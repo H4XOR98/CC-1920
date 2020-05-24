@@ -1,6 +1,11 @@
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerSender implements Runnable{
@@ -21,15 +26,21 @@ public class ServerSender implements Runnable{
     @Override
     public void run() {
         Packet packet;
+        Encryptor encryptor = new Encryptor();
+        byte[] key = "1234567890123456".getBytes();
+        byte[] encryptedData;
         while (true){
             if(this.permission.get()) {
                 packet = this.cloud.getReplyPacket(sessionId);
                 if (packet != null) {
                     try {
+                        encryptedData = encryptor.encryptMessage(packet.getData(), key);
+                        packet.setData(encryptedData);
                         DatagramPacket datagramPacket = new DatagramPacket(packet.toBytes(), packet.toBytes().length, overlayPeer, Constants.UDPPort);
                         this.connection.getDatagramSocket().send(datagramPacket);
                         //System.out.println("[client " + packet.getId() + "] reply sent through UDP");
-                    } catch (IOException e) {
+                    } catch (IOException | NoSuchPaddingException | InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException
+                    e) {
                         e.printStackTrace();
                     }
                     if (packet.isLast()) {

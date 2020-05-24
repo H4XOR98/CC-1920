@@ -1,6 +1,11 @@
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 public class Receiver implements Runnable{
     private AnonGWClientCloud clientCloud;
@@ -16,6 +21,9 @@ public class Receiver implements Runnable{
     @Override
     public void run() {
         byte[] incomingData = new byte[Constants.MaxSizePacket];
+        Encryptor encryptor = new Encryptor();
+        byte[] key = "1234567890123456".getBytes();
+        byte[] decryptedData;
 
         while (true) {
             try {
@@ -26,6 +34,8 @@ public class Receiver implements Runnable{
                 if(incomingPacket != null){
                     // get Packet
                     Packet packet = new Packet(incomingPacket.getData());
+                    decryptedData = encryptor.decryptMessage(packet.getData(), key);
+                    packet.setData(decryptedData);
 
                     // get InetAddress
                     InetAddress address = incomingPacket.getAddress();
@@ -35,7 +45,7 @@ public class Receiver implements Runnable{
                     if (packet.getDestination() == Constants.ToServer) this.serverCloud.insertRequest(packet, address);
                     else this.clientCloud.insertReply(packet);
                 }
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
                 e.printStackTrace();
             }
         }
